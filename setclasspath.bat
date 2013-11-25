@@ -1,0 +1,10 @@
+set JAVA_HOME=c:\opt\java\jdk1.6.0
+set CLASSPATH=%CLASSPATH%;c:\opt\java\spark-0.9.9.4\jetty-webapp-7.3.0.v20110203.jar
+set CLASSPATH=%CLASSPATH%;c:\opt\java\spark-0.9.9.4\log4j-1.2.14.jar
+set CLASSPATH=%CLASSPATH%;c:\opt\java\spark-0.9.9.4\servlet-api-3.0.pre4.jar
+set CLASSPATH=%CLASSPATH%;c:\opt\java\spark-0.9.9.4\slf4j-api-1.6.1.jar
+set CLASSPATH=%CLASSPATH%;c:\opt\java\spark-0.9.9.4\slf4j-log4j12-1.6.1.jar
+set CLASSPATH=%CLASSPATH%;c:\opt\java\spark-0.9.9.4\spark-0.9.9.4-SNAPSHOT.jar
+set CLASSPATH=%CLASSPATH%;c:\opt\java\spark-0.9.9.4\spark-0.9.9.4-SNAPSHOT-javadoc.jar
+set CLASSPATH=%CLASSPATH%;c:\opt\java\spark-0.9.9.4\spark-0.9.9.4-SNAPSHOT-sources.jar
+set CLASSPATH=%CLASSPATH%;c:\opt\workspace\TheHunt\bin
