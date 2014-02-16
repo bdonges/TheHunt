@@ -1,9 +1,10 @@
 package hunt.beans;
 
 import java.util.Hashtable;
-import java.util.Vector;
+
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 public class Team extends BeanUtils 
 {
@@ -18,7 +19,7 @@ public class Team extends BeanUtils
 	/**
 	 * populates a Team object from a BasicDBObject  
 	 */
-	public Team(BasicDBObject obj) 
+	public Team(DBObject obj) 
 	{
 		convertDBObjectToTeam(obj);
 	}	
@@ -27,19 +28,19 @@ public class Team extends BeanUtils
 	 * populates an Team object from data passed
 	 * @param id
 	 */
-	public Team(String id, String huntId, String name)
+	public Team(String id, String huntId, String name, String score)
 	{
 		this.setId(id);
 		this.setHuntId(huntId);
 		this.setName(name);
+		this.setScore(score);
 	}
 	
 	// --------------------------------------------------------------------------------------	
 	// variables
-	private String[] cols = {"id", "huntId","name"};
+	private String[] cols = {"id", "huntId","name", "score"};
 	private Hashtable<String,Object> data;
 	private String json;
-	private Vector<Player> players = new Vector<Player>();
 	
 	// --------------------------------------------------------------------------------------
 	// other methods
@@ -58,10 +59,10 @@ public class Team extends BeanUtils
 	 * converts a BasicDBObject (mongodb) into a Team
 	 * @param obj
 	 */
-	public void convertDBObjectToTeam(BasicDBObject obj)
+	public void convertDBObjectToTeam(DBObject obj)
 	{
 		setJson(obj.toString());
-		data = convertBasicDBObjectToObject(obj, cols);
+		data = convertDBObjectToObject(obj, cols);
 	}		
 	
 	/**
@@ -87,12 +88,12 @@ public class Team extends BeanUtils
 	public String getId() { return data.get("id").toString(); }
 	public String getHuntId() { return data.get("huntId").toString(); }
 	public String getName() { return data.get("name").toString(); }
-	public Vector<Player> getPlayers() { return this.players; }
+	public String getScore() { return data.get("score").toString(); }
 
 	public void setJson(String json) { this.json = json; }
 	public void setId(String id) { data.put("id", id); }
 	public void setHuntId(String huntId) { data.put("huntId",huntId); }
 	public void setName(String name) { data.put("name",name); }
-	public void setPlayers(Vector<Player> players) { this.players = players; }
+	public void setScore(String score) { data.put("score", score); }
 
 }

@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 public class BeanUtils 
 {
@@ -75,12 +76,17 @@ public class BeanUtils
 	 * @param cols
 	 * @return
 	 */
-	public Hashtable<String,Object> convertBasicDBObjectToObject(BasicDBObject obj, String[] cols)
+	public Hashtable<String,Object> convertDBObjectToObject(DBObject obj, String[] cols)
 	{
 		Hashtable<String,Object> h = new Hashtable<String,Object>();
-		for (String s : cols)
+		for (String key : cols)
 		{
-			h.put(s, obj.get(s));
+			String val = (String)obj.get(key);
+			
+			if (val == null)
+				val = "";
+			
+			h.put(key, val);
 		}
 		return h;
 	}

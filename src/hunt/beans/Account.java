@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 public class Account extends BeanUtils
 {
@@ -13,13 +14,17 @@ public class Account extends BeanUtils
 	 */
 	public Account()
 	{
+		if (data == null)
+			data = new Hashtable<String, Object>();
 	}
 	
 	/**
 	 * populates an Account object from a BasicDBObject  
 	 */
-	public Account(BasicDBObject obj) 
+	public Account(DBObject obj) 
 	{
+		if (data == null)
+			data = new Hashtable<String, Object>();
 		convertDBObjectToAccount(obj);
 	}	
 	
@@ -29,6 +34,9 @@ public class Account extends BeanUtils
 	 */
 	public Account(String id, String firstName, String lastName, String email, String phone)
 	{
+		if (data == null)
+			data = new Hashtable<String, Object>();
+		
 		this.setId(id);
 		this.setFirstName(firstName);
 		this.setLastName(lastName);
@@ -60,10 +68,12 @@ public class Account extends BeanUtils
 	 * converts a BasicDBObject (mongodb) into an Account
 	 * @param obj
 	 */
-	public void convertDBObjectToAccount(BasicDBObject obj)
+	public void convertDBObjectToAccount(DBObject obj)
 	{
 		setJson(obj.toString());
-		data = convertBasicDBObjectToObject(obj, cols);
+		System.out.println("json: " + getJson());
+		data = convertDBObjectToObject(obj, cols);
+		System.out.println("data.size(): " + data.size());
 	}		
 	
 	/**
@@ -85,8 +95,13 @@ public class Account extends BeanUtils
 	
 	// --------------------------------------------------------------------------------------
 	// getters and setters
+	public String getId() 
+	{ 
+		String id = "0";
+		try { id = data.get("id").toString(); } catch (NullPointerException e) {}
+		return id;
+	}
 	public String getJson() { return this.json; }
-	public String getId() { return data.get("id").toString(); }
 	public String getFirstName() { return data.get("firstName").toString(); }
 	public String getLastName() { return data.get("lastName").toString(); }
 	public String getEmail() { return data.get("email").toString(); }

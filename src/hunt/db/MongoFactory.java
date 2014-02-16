@@ -1,11 +1,9 @@
-package the.app.db.mongo;
+package hunt.db;
 
 import java.io.IOException;
 import java.net.Socket;
 import java.util.List;
 
-import com.google.code.morphia.Datastore;
-import com.google.code.morphia.Morphia;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -40,46 +38,6 @@ public class MongoFactory
 	public DB getDatabase(String dbLocation, String dbName, int dbPort) throws Exception
 	{
 		return getDatabase(dbLocation, dbName, dbPort, false, "", "");
-	}
-	
-	/**
-	 * 
-	 * @return
-	 * @throws Exception
-	 */
-	public Morphia getMorphia() throws Exception
-	{
-		Morphia morphia = new Morphia();
-		return morphia;
-	}
-	
-	/**
-	 * 
-	 * @param mongo
-	 * @param morphia
-	 * @param dbName
-	 * @return
-	 * @throws Exception
-	 */
-	public Datastore getDatastore(Mongo mongo, Morphia morphia, String dbName) throws Exception
-	{
-		Datastore ds = morphia.createDatastore(mongo, dbName);
-		return ds;
-	}
-
-	/**
-	 * 
-	 * @param dbLocation
-	 * @param dbPort
-	 * @param dbName
-	 * @return
-	 * @throws Exception
-	 */
-	public Datastore getDatastore(String dbLocation, int dbPort, String dbName) throws Exception
-	{
-		Mongo mongo = getConnection(dbLocation, dbPort);
-		Datastore ds = getMorphia().createDatastore(mongo, dbName);
-		return ds;
 	}
 	
 	/**

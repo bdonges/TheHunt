@@ -4,6 +4,7 @@ import java.util.Hashtable;
 import java.util.Vector;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 public class Hunt extends BeanUtils 
 {
@@ -18,7 +19,7 @@ public class Hunt extends BeanUtils
 	/**
 	 * populates a Hunt object from a BasicDBObject  
 	 */
-	public Hunt(BasicDBObject obj) 
+	public Hunt(DBObject obj) 
 	{
 		convertDBObjectToHunt(obj);
 	}	
@@ -61,10 +62,10 @@ public class Hunt extends BeanUtils
 	 * converts a BasicDBObject (mongodb) into a Hunt
 	 * @param obj
 	 */
-	public void convertDBObjectToHunt(BasicDBObject obj)
+	public void convertDBObjectToHunt(DBObject obj)
 	{
 		setJson(obj.toString());
-		data = convertBasicDBObjectToObject(obj, cols);
+		data = convertDBObjectToObject(obj, cols);
 	}		
 	
 	/**

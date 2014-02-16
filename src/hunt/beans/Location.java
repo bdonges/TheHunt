@@ -3,6 +3,7 @@ package hunt.beans;
 import java.util.Hashtable;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 public class Location extends BeanUtils 
 {
@@ -16,7 +17,7 @@ public class Location extends BeanUtils
 	/**
 	 * populates a Location object from a BasicDBObject  
 	 */
-	public Location(BasicDBObject obj) 
+	public Location(DBObject obj) 
 	{
 		convertDBObjectToLocation(obj);
 	}	
@@ -54,10 +55,10 @@ public class Location extends BeanUtils
 	 * converts a BasicDBObject (mongodb) into a Location
 	 * @param obj
 	 */
-	public void convertDBObjectToLocation(BasicDBObject obj)
+	public void convertDBObjectToLocation(DBObject obj)
 	{
 		setJson(obj.toString());
-		data = convertBasicDBObjectToObject(obj, cols);
+		data = convertDBObjectToObject(obj, cols);
 	}		
 	
 	/**
