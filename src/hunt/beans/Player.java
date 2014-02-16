@@ -62,7 +62,7 @@ public class Player extends BeanUtils
 	public void convertDBObjectToPlayer(BasicDBObject obj)
 	{
 		setJson(obj.toString());
-		data = convertBasicDBObjectToObject(obj, cols);
+		data = convertDBObjectToObject(obj, cols);
 	}		
 	
 	/**
