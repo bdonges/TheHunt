@@ -6,7 +6,7 @@ import com.mongodb.DB;
 
 
 import hunt.beans.Account;
-import hunt.business.AccountManager;
+import hunt.db.AccountManager;
 import hunt.db.MongoFactory;
 
 public class AccountTest extends TestUtils

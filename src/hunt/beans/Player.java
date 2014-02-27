@@ -3,6 +3,7 @@ package hunt.beans;
 import java.util.Hashtable;
 
 import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
 
 public class Player extends BeanUtils
 {
@@ -17,7 +18,7 @@ public class Player extends BeanUtils
 	/**
 	 * populates a Player object from a BasicDBObject  
 	 */
-	public Player(BasicDBObject obj) 
+	public Player(DBObject obj) 
 	{
 		convertDBObjectToPlayer(obj);
 	}	
@@ -26,19 +27,19 @@ public class Player extends BeanUtils
 	 * populates an Player object from data passed
 	 * @param id
 	 */
-	public Player(String id, String huntId, String teamId, String firstName, String lastName, String email)
+	public Player(String id, String teamId, String firstName, String lastName, String email, String phoneNumber)
 	{
 		this.setId(id);
-		this.setHuntId(huntId);
 		this.setTeamId(teamId);
 		this.setFirstName(firstName);
 		this.setLastName(lastName);
 		this.setEmail(email);
+		this.setPhoneNumber(phoneNumber);
 	}
 	
 	// --------------------------------------------------------------------------------------	
 	// variables
-	private String[] cols = {"id", "huntId","teamId","firstName","lastName","email"};
+	private String[] cols = {"id","teamId","firstName","lastName","email","phoneNumber"};
 	private Hashtable<String,Object> data;
 	private String json;
 	
@@ -59,7 +60,7 @@ public class Player extends BeanUtils
 	 * converts a BasicDBObject (mongodb) into a Player
 	 * @param obj
 	 */
-	public void convertDBObjectToPlayer(BasicDBObject obj)
+	public void convertDBObjectToPlayer(DBObject obj)
 	{
 		setJson(obj.toString());
 		data = convertDBObjectToObject(obj, cols);
@@ -86,18 +87,18 @@ public class Player extends BeanUtils
 	// getters and setters
 	public String getJson() { return this.json; }
 	public String getId() { return data.get("id").toString(); }
-	public String getHuntId() { return data.get("huntId").toString(); }
 	public String getTeamId() { return data.get("teamId").toString(); }
 	public String getFirstName() { return data.get("firstName").toString(); }
 	public String getLastName() { return data.get("lastName").toString(); }
 	public String getEmail() { return data.get("firstName").toString(); }	
+	public String getPhoneNumber() { return data.get("phoneNumber").toString();}
 
 	public void setJson(String json) { this.json = json; }
 	public void setId(String id) { data.put("id", id); }
-	public void setHuntId(String huntId) { data.put("huntId",huntId); }
 	public void setTeamId(String teamId) { data.put("teamId",teamId); }
 	public void setFirstName(String firstName) { data.put("firstName",firstName); }
 	public void setLastName(String lastName) { data.put("lastName",lastName); }
 	public void setEmail(String email) { data.put("firstName",email); }	
+	public void setPhoneNumber(String phoneNumber) { data.put("firstName", phoneNumber); }
 	
 }

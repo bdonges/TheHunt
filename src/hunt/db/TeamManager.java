@@ -1,4 +1,4 @@
-package hunt.business;
+package hunt.db;
 
 import java.util.ArrayList;
 
@@ -7,17 +7,19 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 
-import hunt.beans.Account;
+import hunt.beans.Hunt;
+import hunt.beans.Location;
+import hunt.beans.Team;
 
-public class AccountManager 
+public class TeamManager 
 {
 
-	private final String COLLECTION_NAME = "accounts";
+	private final String COLLECTION_NAME = "teams";
 	
 	/**
 	 * 
 	 */
-	public AccountManager() 
+	public TeamManager() 
 	{
 	}
 	
@@ -37,12 +39,12 @@ public class AccountManager
 	 * @param db
 	 * @return
 	 */
-	public Account upsert(Account account, DB db) 
+	public Team upsert(Team team, DB db) 
 	{
 		DBCollection col = getCollection(db);	
-		col.update(new BasicDBObject("_id", account.getId()), 
-			    account.convertAccountToBasicDBObject(), true, false);
-		return findOne(account.getId(), db);
+		col.update(new BasicDBObject("_id", team.getId()), 
+			    team.convertTeamToBasicDBObject(), true, false);
+		return findOne(team.getId(), db);
 	}
 	
 	/**
@@ -51,10 +53,10 @@ public class AccountManager
 	 * @param db
 	 * @return
 	 */
-	public Account findOne(String _id, DB db)
+	public Team findOne(String _id, DB db)
 	{
 		System.out.println("findOne(" + _id + ")");
-		Account account = new Account();
+		Team team = new Team();
 		BasicDBObject query = new BasicDBObject("_id", _id);
 		DBCollection col = getCollection(db);
 		DBCursor cursor = col.find(query);
@@ -65,14 +67,14 @@ public class AccountManager
 			while(cursor.hasNext()) 
 			{
 				System.out.println("inside while");
-				account.convertDBObjectToAccount(cursor.next());
+				team.convertDBObjectToTeam(cursor.next());
 			}
 		} 
 		finally 
 		{
 		   cursor.close();
 		}
-		return account;
+		return team;
 	}
 	
 	/**
@@ -80,25 +82,26 @@ public class AccountManager
 	 * @param db
 	 * @return
 	 */
-	public ArrayList<Account> getAll(DB db)
+	public ArrayList<Team> getAllForHunt(Hunt hunt, DB db)
 	{
-		ArrayList<Account> accounts = new ArrayList<Account>();
-		
-		DBCollection c = db.getCollection(COLLECTION_NAME);
-		DBCursor cursor = c.find();
+		ArrayList<Team> team = new ArrayList<Team>();
+
+		BasicDBObject query = new BasicDBObject("huntId", hunt.getId());
+		DBCollection col = getCollection(db);
+		DBCursor cursor = col.find(query);
 		
 		try 
 		{	
 		   while(cursor.hasNext()) 
 		   {
-		       accounts.add(new Account(cursor.next()));
+			   team.add(new Team(cursor.next()));
 		   }
 		} 
 		finally 
 		{
 		   cursor.close();
 		}
-		return accounts;
+		return team;
 	}
-	
+		
 }

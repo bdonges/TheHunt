@@ -1,6 +1,8 @@
 package hunt.beans;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Vector;
 
 import com.mongodb.BasicDBObject;
@@ -41,9 +43,8 @@ public class Hunt extends BeanUtils
 	private String[] cols = {"id", "accountId","name","runDate"};
 	private Hashtable<String,Object> data;
 	private String json;
-	private Vector<Team> teams = new Vector<Team>();
-	private Vector<Location> locations = new Vector<Location>();
-	private Account account;
+	private List<Team> teams = new ArrayList<Team>();
+	private List<Location> locations = new ArrayList<Location>();
 	
 	// --------------------------------------------------------------------------------------
 	// other methods
@@ -92,17 +93,15 @@ public class Hunt extends BeanUtils
 	public String getAccountId() { return data.get("accountId").toString(); }
 	public String getName() { return data.get("name").toString(); }
 	public String getRunDate() { return data.get("runDate").toString(); }
-	public Vector<Team> getTeams() { return this.teams; }
-	public Vector<Location> getLocations() { return this.locations; }
-	public Account getAccount() { return this.account; }
+	public List<Team> getTeams() { return this.teams; }
+	public List<Location> getLocations() { return this.locations; }
 
 	public void setJson(String json) { this.json = json; }
 	public void setId(String id) { data.put("id", id); }
 	public void setAccountId(String accountId) { data.put("accountId",accountId); }
 	public void setName(String name) { data.put("name",name); }
 	public void setRunDate(String runDate) { data.put("runDate",runDate); }
-	public void setTeams(Vector<Team> teams) { this.teams = teams; }
-	public void setLocations(Vector<Location> locations) { this.locations = locations; }
-	public void setAccount(Account account) { this.account = account; }
+	public void setTeams(List<Team> teams) { this.teams = teams; }
+	public void setLocations(List<Location> locations) { this.locations = locations; }
 
 }

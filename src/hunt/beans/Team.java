@@ -1,6 +1,8 @@
 package hunt.beans;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 
 
 import com.mongodb.BasicDBObject;
@@ -42,6 +44,7 @@ public class Team extends BeanUtils
 	private Hashtable<String,Object> data;
 	private String json;
 	
+	private List<TeamLocation> teamLocations = new ArrayList<TeamLocation>();
 	// --------------------------------------------------------------------------------------
 	// other methods
     /**
@@ -89,11 +92,13 @@ public class Team extends BeanUtils
 	public String getHuntId() { return data.get("huntId").toString(); }
 	public String getName() { return data.get("name").toString(); }
 	public String getScore() { return data.get("score").toString(); }
+	public List<TeamLocation> getTeamLocations() { return teamLocations; }
 
 	public void setJson(String json) { this.json = json; }
 	public void setId(String id) { data.put("id", id); }
 	public void setHuntId(String huntId) { data.put("huntId",huntId); }
 	public void setName(String name) { data.put("name",name); }
 	public void setScore(String score) { data.put("score", score); }
+	public void setTeamLoations(List<TeamLocation> teamLocations) { this.teamLocations = teamLocations; }
 
 }
