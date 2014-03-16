@@ -30,18 +30,19 @@ public class Team extends BeanUtils
 	 * populates an Team object from data passed
 	 * @param id
 	 */
-	public Team(String id, String huntId, String name, String score)
+	public Team(String id, String huntId, String name, String score, String password)
 	{
 		this.setId(id);
 		this.setHuntId(huntId);
 		this.setName(name);
 		this.setScore(score);
+		this.setPassword(password);
 	}
 	
 	// --------------------------------------------------------------------------------------	
 	// variables
-	private String[] cols = {"id", "huntId","name", "score"};
-	private Hashtable<String,Object> data;
+	private String[] cols = {"id", "huntId","name", "score", "password"};
+	private Hashtable<String,Object> data = new Hashtable<String,Object>();
 	private String json;
 	
 	private List<TeamLocation> teamLocations = new ArrayList<TeamLocation>();
@@ -87,11 +88,13 @@ public class Team extends BeanUtils
 	
 	// --------------------------------------------------------------------------------------
 	// getters and setters
+	
 	public String getJson() { return this.json; }
 	public String getId() { return data.get("id").toString(); }
 	public String getHuntId() { return data.get("huntId").toString(); }
 	public String getName() { return data.get("name").toString(); }
 	public String getScore() { return data.get("score").toString(); }
+	public String getPassword() { return data.get("password").toString(); }
 	public List<TeamLocation> getTeamLocations() { return teamLocations; }
 
 	public void setJson(String json) { this.json = json; }
@@ -99,6 +102,7 @@ public class Team extends BeanUtils
 	public void setHuntId(String huntId) { data.put("huntId",huntId); }
 	public void setName(String name) { data.put("name",name); }
 	public void setScore(String score) { data.put("score", score); }
+	public void setPassword(String password) { data.put("password", password); }
 	public void setTeamLoations(List<TeamLocation> teamLocations) { this.teamLocations = teamLocations; }
 
 }

@@ -3,7 +3,6 @@ package hunt.beans;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
@@ -40,9 +39,9 @@ public class Hunt extends BeanUtils
 	
 	// --------------------------------------------------------------------------------------	
 	// variables
-	private String[] cols = {"id", "accountId","name","runDate"};
-	private Hashtable<String,Object> data;
-	private String json;
+	private String[] cols = {"id","accountId","name","runDate"};
+	private Hashtable<String,Object> data = new Hashtable<String,Object>();
+	private String json = "";
 	private List<Team> teams = new ArrayList<Team>();
 	private List<Location> locations = new ArrayList<Location>();
 	
@@ -89,17 +88,22 @@ public class Hunt extends BeanUtils
 	// --------------------------------------------------------------------------------------
 	// getters and setters
 	public String getJson() { return this.json; }
-	public String getId() { return data.get("id").toString(); }
-	public String getAccountId() { return data.get("accountId").toString(); }
-	public String getName() { return data.get("name").toString(); }
-	public String getRunDate() { return data.get("runDate").toString(); }
+	public String getId() 
+	{ 
+		Object o = data.get("_id");
+		System.out.println("o : " + o);
+		return checkNullString(o.toString()); 
+	}
+	public String getAccountId() { return checkNullString(data.get("accountId").toString()); }
+	public String getName() { return checkNullString(data.get("name").toString()); }
+	public String getRunDate() { return checkNullString(data.get("runDate").toString()); }
 	public List<Team> getTeams() { return this.teams; }
 	public List<Location> getLocations() { return this.locations; }
 
 	public void setJson(String json) { this.json = json; }
-	public void setId(String id) { data.put("id", id); }
+	public void setId(String id) { data.put("_id", id); }
 	public void setAccountId(String accountId) { data.put("accountId",accountId); }
-	public void setName(String name) { data.put("name",name); }
+	public void setName(String name) { data.put("name", name); }
 	public void setRunDate(String runDate) { data.put("runDate",runDate); }
 	public void setTeams(List<Team> teams) { this.teams = teams; }
 	public void setLocations(List<Location> locations) { this.locations = locations; }

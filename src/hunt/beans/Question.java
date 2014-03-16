@@ -28,10 +28,9 @@ public class Question extends BeanUtils
 	 * populates an Quesiton object from data passed
 	 * @param id
 	 */
-	public Question(String id, String huntId, String locationId, String question, String answer, String points)
+	public Question(String id, String locationId, String question, String answer, String points)
 	{
 		this.setId(id);
-		this.setHuntId(huntId);
 		this.setLocationId(locationId);
 		this.setQuestion(question);
 		this.setAnswer(answer);
@@ -40,8 +39,8 @@ public class Question extends BeanUtils
 	
 	// --------------------------------------------------------------------------------------	
 	// variables
-	private String[] cols = {"id", "huntId", "locationId", "question", "answer", "points"};
-	private Hashtable<String,Object> data;
+	private String[] cols = {"id", "locationId", "question", "answer", "points"};
+	private Hashtable<String,Object> data = new Hashtable<String,Object>();
 	private String json;
 	
 	// --------------------------------------------------------------------------------------
@@ -88,7 +87,6 @@ public class Question extends BeanUtils
 	// getters and setters
 	public String getJson() { return this.json; }
 	public String getId() { return data.get("id").toString(); }
-	public String getHuntId() { return data.get("huntId").toString(); }
 	public String getLocationId() { return data.get("locationId").toString(); }
 	public String getQuestion() { return data.get("question").toString(); }
 	public String getAnswer() { return data.get("answer").toString(); }
@@ -96,7 +94,6 @@ public class Question extends BeanUtils
 
 	public void setJson(String json) { this.json = json; }
 	public void setId(String id) { data.put("id", id); }
-	public void setHuntId(String huntId) { data.put("huntId",huntId); }
 	public void setLocationId(String locationId) { data.put("locationId",locationId); }
 	public void setQuestion(String question) { data.put("question", question); }
 	public void setAnswer(String answer) { data.put("ansswer",answer); }

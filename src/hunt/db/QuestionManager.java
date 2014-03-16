@@ -1,6 +1,10 @@
 package hunt.db;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -12,101 +16,163 @@ import hunt.beans.Question;
 
 public class QuestionManager 
 {
-
-	private final String COLLECTION_NAME = "questions";
 	
-	/**
-	 * 
-	 */
-	public QuestionManager() 
-	{
-	}
+	private int id;
 	
-	/**
-	 * 
-	 * @param db
-	 * @return
-	 */
-	public DBCollection getCollection(DB db)
-	{
-		return db.getCollection(COLLECTION_NAME);
-	}
+	private String INSERT = "INSERT";
+	private String UPDATE = "UPDATE";
+	private String DELETE = "DELETE";
+	private String GET = "GET";
+	private String GET_FOR_LOCATION = "GET_FOR_LOCATION";
 	
-	/**
-	 * 
-	 * @param account
-	 * @param db
-	 * @return
-	 */
-	public Question upsert(Question question, DB db) 
-	{
-		DBCollection col = getCollection(db);	
-		col.update(new BasicDBObject("_id", question.getId()), 
-			    question.convertQuestionToBasicDBObject(), true, false);
-		return findOne(question.getId(), db);
-	}
+	private String INSERT_QRY = "INSERT INTO questions (location_id, question, answer, points) values (?,?,?,?)";
+	private String UPDATE_QRY = "UPDATE questions SET location_id = ?, question = ?, answer = ?, points = ? WHERE id = ?";
+	private String DELETE_QRY = "DELETE FROM questions WHERE id = ?";
+	private String GET_QRY = "SELECT * FROM questions WHERE id = ?";
+	private String GET_FOR_LOCATION_QRY = "SELECT * FROM questions WHERE location_id = ? ORDER BY question";
 	
-	/**
-	 * 
-	 * @param _id
-	 * @param db
-	 * @return
-	 */
-	public Question findOne(String _id, DB db)
+	private Vector<Question> process(ResultSet rs) throws Exception
 	{
-		System.out.println("findOne(" + _id + ")");
-		Question question = new Question();
-		BasicDBObject query = new BasicDBObject("_id", _id);
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
-
-		try
+		Vector<Question> objs = new Vector<Question>();
+		while (rs.next())
 		{
-			System.out.println("inside try");
-			while(cursor.hasNext()) 
-			{
-				System.out.println("inside while");
-				question.convertDBObjectToQuestion(cursor.next());
-			}
-		} 
-		finally 
-		{
-		   cursor.close();
+			objs.add(new Question(rs.getString("id"),
+								  rs.getString("location_id"),
+								  rs.getString("question"),
+								  rs.getString("answer"),
+								  rs.getString("points")));
 		}
-		return question;
+		return objs;
 	}
 	
-	/**
-	 * 
-	 * @param db
-	 * @return
-	 */
-	public ArrayList<Question> getAllForLocation(Location location, DB db)
+	private Vector<Question> executeSql(Connection c, String sql, String action, Question obj) throws Exception
 	{
-		ArrayList<Question> questions = new ArrayList<Question>();
+		// instantiate list object
+		Vector<Question> objs = new Vector<Question>();
 
-		BasicDBObject query = new BasicDBObject("locationId", location.getId());
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
+		// the one prepared statement
+		PreparedStatement pst = c.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 		
-		try 
-		{	
-		   while(cursor.hasNext()) 
-		   {
-		       questions.add(new Question(cursor.next()));
-		   }
-		} 
-		finally 
+		// work per action
+		if (action.equals(INSERT))
 		{
-		   cursor.close();
+			pst.setInt(1, Integer.parseInt(obj.getLocationId()));
+			pst.setString(2, obj.getQuestion());
+			pst.setString(3, obj.getAnswer());
+			pst.setString(4, obj.getPoints());
+			
+			id = 0;
+			pst.executeUpdate();
+			ResultSet rs = pst.getGeneratedKeys();
+			if (rs.next())
+				id = rs.getInt(1);
+			rs.close();
 		}
-		return questions;
+		else if (action.equals(UPDATE))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getLocationId()));
+			pst.setString(2, obj.getQuestion());
+			pst.setString(3, obj.getAnswer());
+			pst.setString(4, obj.getPoints());
+			pst.setInt(5, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}		
+		else if (action.equals(DELETE))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}
+		else if (action.equals(GET))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}
+		else if (action.equals(GET_FOR_LOCATION))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getLocationId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}
+		
+		// close prepared statement
+		pst.close();
+		
+		// ensure we never return a null list
+		if (objs == null)
+			objs = new Vector<Question>();
+		
+		return objs;
 	}
 	
-	public void deleteQuestion(Question question, DB db)
+	// *********************************************************************************
+	// start public stuff
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public int insert(Connection c, Question obj) throws Exception
 	{
-		BasicDBObject query = new BasicDBObject("questionId", question.getId());
-		DBCollection col = getCollection(db);
-		col.findAndRemove(query);
+		executeSql(c, INSERT_QRY, INSERT, obj);
+		return id;
 	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public void update(Connection c, Question obj) throws Exception
+	{
+		executeSql(c, UPDATE_QRY, UPDATE, obj);
+	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Question get(Connection c, Question obj) throws Exception
+	{
+		Question q = new Question();
+		
+		Vector <Question> objs = executeSql(c, GET_QRY, GET, obj);
+		
+		if (objs != null)
+			q = objs.get(0);
+		
+		return q;
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Vector<Question> getLocationsForHunt(Connection c, Question obj) throws Exception
+	{
+		return executeSql(c, GET_FOR_LOCATION_QRY, GET_FOR_LOCATION, obj);
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public void delete(Connection c, Question obj) throws Exception
+	{
+		executeSql(c, DELETE_QRY, DELETE, obj);
+	}
+		
 }

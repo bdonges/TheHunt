@@ -7,7 +7,7 @@ import hunt.beans.Team;
 import hunt.db.PlayerManager;
 import hunt.db.TeamManager;
 
-public class PlayerCommand 
+public class PlayerCommand extends Command
 {
 
 	public PlayerCommand()
@@ -29,27 +29,7 @@ public class PlayerCommand
 	{
 		boolean added = true;
 		
-		Team team = new TeamManager().findOne(teamId, db);
-		
-		Player player = new Player();
-		player.setTeamId(teamId);
-		player.setFirstName(firstName);
-		player.setLastName(lastName);
-		player.setEmail(email);
-		player.setPhoneNumber(phoneNumber);
-		
-		try
-		{
-			if (validatePlayer(player))
-			{
-				new PlayerManager().upsert(player, db);
-			}
-		}
-		catch (Exception e)
-		{
-			added = false;
-		}
-		
+
 		return added;
 	}
 	
@@ -57,17 +37,7 @@ public class PlayerCommand
 	{
 		boolean moved = true;
 		
-		try
-		{
-			PlayerManager pMgr = new PlayerManager();
-			Player player = pMgr.getPlayerOnTeam(playerId, oldTeamId, db);
-			player.setTeamId(newTeamId);
-			pMgr.upsert(player, db);
-		}
-		catch (Exception e)
-		{
-			
-		}
+
 		
 		return moved;
 	}

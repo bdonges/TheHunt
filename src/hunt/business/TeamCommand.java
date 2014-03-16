@@ -5,12 +5,14 @@ import hunt.beans.Team;
 import hunt.db.HuntManager;
 import hunt.db.TeamManager;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 
 import com.mongodb.DB;
 
-public class TeamCommand 
+public class TeamCommand extends Command
 {
 	
 	public TeamCommand()
@@ -24,22 +26,10 @@ public class TeamCommand
 	 * @param db
 	 * @return
 	 */
-	public List<Team> getTeams(String huntId, DB db)
+	public Vector<Team> getTeams(Connection con, String huntId)
 	{
-		List<Team> teams = new ArrayList<Team>();
+		Vector<Team> teams = new Vector<Team>();
 		
-		try
-		{
-			Hunt hunt = new HuntManager().findOne(huntId, db);
-			teams = new TeamManager().getAllForHunt(hunt, db);
-		
-			if (teams == null)
-				teams = new ArrayList<Team>();
-		}
-		catch (Exception e)
-		{
-			
-		}
 		return teams;
 	}
 	
@@ -50,31 +40,10 @@ public class TeamCommand
 	 * @param db
 	 * @return
 	 */
-	public List<Team> getAllTeamResultsForHunt(String teamId, String huntId, DB db)
+	public Vector<Team> getAllTeamResultsForHunt(String teamId, String huntId, DB db)
 	{
-		List<Team> teamsWithResults = new ArrayList<Team>();
+		Vector<Team> teamsWithResults = new Vector<Team>();
 		
-		try
-		{
-			Hunt hunt = new HuntManager().findOne(huntId, db);
-			
-			
-			List<Team> teams = new TeamManager().getAllForHunt(hunt, db);
-		
-			if (teams != null && teams.size() > 0)
-			{
-				TeamResultsCommand trCmd = new TeamResultsCommand();
-				for (Team team : teams)
-				{
-					team = trCmd.getTeamResultsForHunt(team, hunt, db);
-					teamsWithResults.add(team);
-				}
-			}
-		}
-		catch (Exception e)
-		{
-			
-		}
 		return teamsWithResults;
 	}
 	

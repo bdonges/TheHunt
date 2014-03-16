@@ -1,6 +1,10 @@
 package hunt.db;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Vector;
 
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -12,101 +16,175 @@ import hunt.beans.Location;
 
 public class LocationManager 
 {
-
-	private final String COLLECTION_NAME = "locations";
+	private int id;
 	
-	/**
-	 * 
-	 */
-	public LocationManager() 
-	{
-	}
+	private String INSERT = "INSERT";
+	private String UPDATE = "UPDATE";
+	private String DELETE = "DELETE";
+	private String GET = "GET";
+	private String GET_FOR_HUNT = "GET_FOR_HUNT";
 	
-	/**
-	 * 
-	 * @param db
-	 * @return
-	 */
-	public DBCollection getCollection(DB db)
-	{
-		return db.getCollection(COLLECTION_NAME);
-	}
+	private String INSERT_QRY = "INSERT INTO locations (hunt_id, name, code, key, address, phone, special_location_id, has_special) values (?,?,?,?,?,?,?)";
+	private String UPDATE_QRY = "UPDATE locations SET name = ?, hunt_id = ?, code = ?, key = ?, address = ?, phone = ?, special_location_id = ?, has_special = ? WHERE id = ?";
+	private String DELETE_QRY = "DELETE FROM locations WHERE id = ?";
+	private String GET_QRY = "SELECT * FROM locations WHERE id = ?";
+	private String GET_FOR_HUNT_QRY = "SELECT * FROM locations WHERE hunt_id = ? ORDER BY name";
 	
-	/**
-	 * 
-	 * @param account
-	 * @param db
-	 * @return
-	 */
-	public Location upsert(Location location, DB db) 
+	private Vector<Location> process(ResultSet rs) throws Exception
 	{
-		DBCollection col = getCollection(db);	
-		col.update(new BasicDBObject("_id", location.getId()), 
-			    location.convertLocationToBasicDBObject(), true, false);
-		return findOne(location.getId(), db);
-	}
-	
-	/**
-	 * 
-	 * @param _id
-	 * @param db
-	 * @return
-	 */
-	public Location findOne(String _id, DB db)
-	{
-		System.out.println("findOne(" + _id + ")");
-		Location location = new Location();
-		BasicDBObject query = new BasicDBObject("_id", _id);
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
-
-		try
+		Vector<Location> objs = new Vector<Location>();
+		while (rs.next())
 		{
-			System.out.println("inside try");
-			while(cursor.hasNext()) 
-			{
-				System.out.println("inside while");
-				location.convertDBObjectToLocation(cursor.next());
-			}
-		} 
-		finally 
-		{
-		   cursor.close();
+			objs.add(new Location(rs.getString("id"),
+					              rs.getString("hunt_id"),
+					              rs.getString("name"),
+					              rs.getString("code"),
+					              rs.getString("key"),
+					              rs.getString("address"),
+					              rs.getString("phone"),
+					              rs.getString("special_location_id"),
+					              rs.getString("has_special")));
 		}
-		return location;
+		return objs;
 	}
 	
-	public void deleteLocation(String locationId, DB db)
+	private Vector<Location> executeSql(Connection c, String sql, String action, Location obj) throws Exception
 	{
-		Location location = findOne(locationId, db);
+		// instantiate list object
+		Vector<Location> objs = new Vector<Location>();
+
+		// the one prepared statement
+		PreparedStatement pst = c.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 		
+		// work per action
+		if (action.equals(INSERT))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getHuntId()));
+			pst.setString(2, obj.getName());
+			pst.setString(3, obj.getCode());
+			pst.setString(4, obj.getKey());
+			pst.setString(5, obj.getAddress());
+			pst.setString(6, obj.getPhoneNumber());
+			pst.setInt(7,  Integer.parseInt(obj.getSpecialLocationId()));
+			pst.setString(8, obj.getHasSpecial());
+			
+			id = 0;
+			pst.executeUpdate();
+			ResultSet rs = pst.getGeneratedKeys();
+			if (rs.next())
+				id = rs.getInt(1);
+			rs.close();
+		}
+		else if (action.equals(UPDATE))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getHuntId()));
+			pst.setString(2, obj.getName());
+			pst.setString(3, obj.getCode());
+			pst.setString(4, obj.getKey());
+			pst.setString(5, obj.getAddress());
+			pst.setString(6, obj.getPhoneNumber());
+			pst.setInt(7,  Integer.parseInt(obj.getSpecialLocationId()));
+			pst.setString(8, obj.getHasSpecial());
+			pst.setInt(9, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}		
+		else if (action.equals(DELETE))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}
+		else if (action.equals(GET))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}
+		else if (action.equals(GET_FOR_HUNT))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getHuntId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}
+		
+		// close prepared statement
+		pst.close();
+		
+		// ensure we never return a null list
+		if (objs == null)
+			objs = new Vector<Location>();
+		
+		return objs;
+	}
+	
+	// *********************************************************************************
+	// start public stuff
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public int insert(Connection c, Location obj) throws Exception
+	{
+		executeSql(c, INSERT_QRY, INSERT, obj);
+		return id;
 	}
 	
 	/**
 	 * 
-	 * @param db
-	 * @return
+	 * @param c
+	 * @param obj
+	 * @throws Exception
 	 */
-	public ArrayList<Location> getAllForHunt(Hunt hunt, DB db)
+	public void update(Connection c, Location obj) throws Exception
 	{
-		ArrayList<Location> locations = new ArrayList<Location>();
-		
-		BasicDBObject query = new BasicDBObject("huntId", hunt.getId());
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
-		
-		try 
-		{	
-		   while(cursor.hasNext()) 
-		   {
-			   locations.add(new Location(cursor.next()));
-		   }
-		} 
-		finally 
-		{
-		   cursor.close();
-		}
-		return locations;
+		executeSql(c, UPDATE_QRY, UPDATE, obj);
 	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Location get(Connection c, Location obj) throws Exception
+	{
+		Location l = new Location();
+		
+		Vector <Location> objs = executeSql(c, GET_QRY, GET, obj);
+		
+		if (objs != null)
+			l = objs.get(0);
+		
+		return l;
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Vector<Location> getLocationsForHunt(Connection c, Location obj) throws Exception
+	{
+		return executeSql(c, GET_FOR_HUNT_QRY, GET_FOR_HUNT, obj);
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public void delete(Connection c, Location obj) throws Exception
+	{
+		executeSql(c, DELETE_QRY, DELETE, obj);
+	}
+	
 	
 }

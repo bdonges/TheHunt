@@ -32,7 +32,7 @@ public class Account extends BeanUtils
 	 * populates an Account object from data passed
 	 * @param id
 	 */
-	public Account(String id, String firstName, String lastName, String email, String phone)
+	public Account(String id, String firstName, String lastName, String email, String phone, String username, String password)
 	{
 		if (data == null)
 			data = new Hashtable<String, Object>();
@@ -42,12 +42,14 @@ public class Account extends BeanUtils
 		this.setLastName(lastName);
 		this.setEmail(email);
 		this.setPhone(phone);
+		this.setUsername(username);
+		this.setPassword(password);
 	}
 	
 	// --------------------------------------------------------------------------------------	
 	// variables
-	private String[] cols = {"id", "firstName","lastName","email","phone"};
-	private Hashtable<String,Object> data;
+	private String[] cols = {"id", "firstName","lastName","email","phone", "username", "password"};
+	private Hashtable<String,Object> data = new Hashtable<String,Object>();
 	private String json;
 	private Vector<Hunt> hunts = new Vector<Hunt>();
 	
@@ -71,9 +73,7 @@ public class Account extends BeanUtils
 	public void convertDBObjectToAccount(DBObject obj)
 	{
 		setJson(obj.toString());
-		System.out.println("json: " + getJson());
 		data = convertDBObjectToObject(obj, cols);
-		System.out.println("data.size(): " + data.size());
 	}		
 	
 	/**
@@ -106,6 +106,8 @@ public class Account extends BeanUtils
 	public String getLastName() { return data.get("lastName").toString(); }
 	public String getEmail() { return data.get("email").toString(); }
 	public String getPhone() { return data.get("phone").toString(); }
+	public String getUsername() { return data.get("username").toString(); }
+	public String getPassword() { return data.get("password").toString(); }
 	public Vector<Hunt> getHunts() { return this.hunts; }
 
 	public void setJson(String json) { this.json = json; }
@@ -114,5 +116,7 @@ public class Account extends BeanUtils
 	public void setLastName(String lastName) { data.put("lastName",lastName); }
 	public void setEmail(String email) { data.put("email",email); }
 	public void setPhone(String phone) { data.put("phone",phone); }
+	public void setUsername(String username) { data.put("username",username); }
+	public void setPassword(String password) { data.put("password",password); }	
 	public void setHunts(Vector<Hunt> hunts) { this.hunts = hunts; }
 }

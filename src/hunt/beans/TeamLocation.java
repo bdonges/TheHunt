@@ -39,7 +39,7 @@ public class TeamLocation extends BeanUtils
 	// --------------------------------------------------------------------------------------	
 	// variables
 	private String[] cols = {"id", "teamId", "locationId", "huntId", "codeEnteredDate","codeEntered","lockedOut","questionsSubmittedDate","score"};
-	private Hashtable<String,Object> data;
+	private Hashtable<String,Object> data = new Hashtable<String,Object>();
 	private String json;
 	
 	private List<TeamAnswer> teamAnswers = new ArrayList<TeamAnswer>();

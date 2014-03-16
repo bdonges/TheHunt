@@ -24,7 +24,7 @@ public class TestServlet extends HttpServlet {
 	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException
 	{
 		
-		String url = "/db_connect.jsp";
+		String url = "/index.jsp";
 		RequestDispatcher rd = getServletContext().getRequestDispatcher(url);		
 		rd.forward(req, res);
 	}

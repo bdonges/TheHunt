@@ -40,7 +40,7 @@ public class TeamAnswer extends BeanUtils
 	// --------------------------------------------------------------------------------------	
 	// variables
 	private String[] cols = {"id", "teamLocationId", "questionId", "answer", "score"};
-	private Hashtable<String,Object> data;
+	private Hashtable<String,Object> data = new Hashtable<String,Object>();
 	private String json;
 	
 	private Question question = new Question();

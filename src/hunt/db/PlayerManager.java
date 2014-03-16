@@ -1,174 +1,182 @@
 package hunt.db;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Vector;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-
-import hunt.beans.Hunt;
 import hunt.beans.Player;
-import hunt.beans.Team;
 
 public class PlayerManager 
 {
+	
+	private int id;
+	
+	private String INSERT = "INSERT";
+	private String UPDATE = "UPDATE";
+	private String DELETE = "DELETE";
+	private String GET = "GET";
+	private String GET_FOR_TEAM = "GET_FOR_TEAM";
+	
+	private String INSERT_QRY = "INSERT INTO players (team_id, first_name, last_name, email, phone_number) values (?,?,?,?,?)";
+	private String UPDATE_QRY = "UPDATE players SET team_id = ?, first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE id = ?";
+	private String DELETE_QRY = "DELETE FROM players WHERE id = ?";
+	private String GET_QRY = "SELECT * FROM players WHERE id = ?";
+	private String GET_FOR_TEAM_QRY = "SELECT * FROM players WHERE team_id = ? ORDER BY last_name, first_name";
+	
+	private Vector<Player> process(ResultSet rs) throws Exception
+	{
+		Vector<Player> objs = new Vector<Player>();
+		while (rs.next())
+		{
+			objs.add(new Player(rs.getString("id"), 
+							  rs.getString("team_id"), 
+							  rs.getString("first_name"), 
+							  rs.getString("last_name"), 
+							  rs.getString("email"),
+							  rs.getString("phone_number")));
+		}
+		return objs;
+	}
+	
+	private Vector<Player> executeSql(Connection c, String sql, String action, Player obj) throws Exception
+	{
+		// instantiate list object
+		Vector<Player> objs = new Vector<Player>();
 
-	private final String COLLECTION_NAME = "players";
-	
-	/**
-	 * 
-	 */
-	public PlayerManager() 
-	{
-	}
-	
-	/**
-	 * 
-	 * @param db
-	 * @return
-	 */
-	public DBCollection getCollection(DB db)
-	{
-		return db.getCollection(COLLECTION_NAME);
-	}
-	
-	/**
-	 * 
-	 * @param account
-	 * @param db
-	 * @return
-	 */
-	public Player upsert(Player player, DB db) 
-	{
-		DBCollection col = getCollection(db);	
-		col.update(new BasicDBObject("_id", player.getId()), 
-				player.convertPlayerToBasicDBObject(), true, false);
-		return findOne(player.getId(), db);
-	}
-	
-	/**
-	 * 
-	 * @param _id
-	 * @param db
-	 * @return
-	 */
-	public Player findOne(String _id, DB db)
-	{
-		System.out.println("findOne(" + _id + ")");
-		Player player = new Player();
-		BasicDBObject query = new BasicDBObject("_id", _id);
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
-
-		try
+		// the one prepared statement
+		PreparedStatement pst = c.prepareStatement(sql);
+		
+		// work per action
+		if (action.equals(INSERT))
 		{
-			System.out.println("inside try");
-			while(cursor.hasNext()) 
-			{
-				System.out.println("inside while");
-				player.convertDBObjectToPlayer(cursor.next());
-			}
-		} 
-		finally 
-		{
-		   cursor.close();
+			pst.setInt(1, Integer.parseInt(obj.getTeamId()));
+			pst.setString(2, obj.getFirstName());
+			pst.setString(3, obj.getLastName());
+			pst.setString(4, obj.getEmail());
+			pst.setString(5, obj.getPhoneNumber());
+			
+			id = 0;
+			pst.executeUpdate();
+			ResultSet rs = pst.getGeneratedKeys();
+			if (rs.next())
+				id = rs.getInt(1);
+			rs.close();
 		}
-		return player;
+		else if (action.equals(UPDATE))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getTeamId()));
+			pst.setString(2, obj.getFirstName());
+			pst.setString(3, obj.getLastName());
+			pst.setString(4, obj.getEmail());
+			pst.setString(5, obj.getPhoneNumber());			
+			pst.setInt(6, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}
+		else if (action.equals(DELETE))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}		
+		else if (action.equals(GET))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}
+		else if (action.equals(GET_FOR_TEAM))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getTeamId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}		
+		
+		// close prepared statement
+		pst.close();
+		
+		// ensure we never return a null list
+		if (objs == null)
+			objs = new Vector<Player>();
+		
+		return objs;
+	}
+	
+	// *********************************************************************************
+	// start public stuff
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public int insert(Connection c, Player obj) throws Exception
+	{
+		executeSql(c, INSERT_QRY, INSERT, obj);
+		return id;
 	}
 	
 	/**
 	 * 
-	 * @param db
-	 * @return
+	 * @param c
+	 * @param obj
+	 * @throws Exception
 	 */
-	public ArrayList<Player> getAllPlayersOnTeam(Team team, DB db)
+	public void update(Connection c, Player obj) throws Exception
 	{
-		ArrayList<Player> players = new ArrayList<Player>();
-		
-		BasicDBObject query = new BasicDBObject("teamId", team.getId());
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
-		
-		try 
-		{	
-		   while(cursor.hasNext()) 
-		   {
-			   players.add(new Player(cursor.next()));
-		   }
-		} 
-		finally 
-		{
-		   cursor.close();
-		}
-		return players;
+		executeSql(c, UPDATE_QRY, UPDATE, obj);
 	}
-
-	/**
-	 * 
-	 * @param playerId
-	 * @param teamId
-	 * @param db
-	 * @return
-	 */
-	public Player getPlayerOnTeam(String playerId, String teamId, DB db)
-	{
-		Player player = new Player();
-		
-		BasicDBObject query = new BasicDBObject("teamId", teamId).append("_id", playerId);
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
-		
-		try 
-		{	
-		   while(cursor.hasNext()) 
-		   {
-			   player = new Player(cursor.next());
-		   }
-		} 
-		finally 
-		{
-		   cursor.close();
-		}
-		return player;
-	}	
 	
 	/**
 	 * 
-	 * @param hunt
-	 * @param db
-	 * @return
+	 * @param c
+	 * @param obj
+	 * @throws Exception
 	 */
-	public ArrayList<Player> getAllPlayersInHunt(Hunt hunt, DB db)
+	public void delete(Connection c, Player obj) throws Exception
 	{
-		ArrayList<Player> players = new ArrayList<Player>();
+		executeSql(c, DELETE_QRY, DELETE, obj);
+	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Player get(Connection c, Player obj) throws Exception
+	{
+		Player p = new Player();
 		
-		// get teams and for each team, get players
-		List<Team> teams = new TeamManager().getAllForHunt(hunt, db);		
-		if (teams != null && teams.size() > 1)
-		{
-			for (Team team : teams)
-			{
-				BasicDBObject query = new BasicDBObject("teamId", team.getId());
-				DBCollection col = getCollection(db);
-				DBCursor cursor = col.find(query);
-				
-				try 
-				{	
-				   while(cursor.hasNext()) 
-				   {
-					   players.add(new Player(cursor.next()));
-			   }
-				} 
-				finally 
-				{
-				   cursor.close();
-				}
-			}
-		}
-		return players;
+		Vector <Player> objs = executeSql(c, GET_QRY, GET, obj);
+		
+		if (objs != null)
+			p = objs.get(0);
+		
+		return p;
 	}
 
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Player getForTeam(Connection c, Player obj) throws Exception
+	{
+		Player p = new Player();
+		
+		Vector <Player> objs = executeSql(c, GET_FOR_TEAM_QRY, GET_FOR_TEAM, obj);
+		
+		if (objs != null && objs.size() > 0)
+			p = objs.get(0);
+		
+		return p;
+	}
 	
+
 }

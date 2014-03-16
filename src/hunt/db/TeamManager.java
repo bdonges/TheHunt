@@ -1,107 +1,179 @@
 package hunt.db;
 
-import java.util.ArrayList;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.Vector;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-
-import hunt.beans.Hunt;
-import hunt.beans.Location;
 import hunt.beans.Team;
 
 public class TeamManager 
 {
-
-	private final String COLLECTION_NAME = "teams";
+	private int id;
 	
-	/**
-	 * 
-	 */
-	public TeamManager() 
-	{
-	}
+	private String INSERT = "INSERT";
+	private String UPDATE = "UPDATE";
+	private String GET = "GET";
+	private String GET_FOR_HUNT = "GET_FOR_HUNT";
+	private String LOGIN_FOR_HUNT = "LOGIN_FOR_HUNT";
 	
-	/**
-	 * 
-	 * @param db
-	 * @return
-	 */
-	public DBCollection getCollection(DB db)
-	{
-		return db.getCollection(COLLECTION_NAME);
-	}
+	private String INSERT_QRY = "INSERT INTO teams (hunt_id, name, score) values (?,?,?)";
+	private String UPDATE_QRY = "UPDATE teams SET hunt_id = ?, name = ?, score = ? WHERE id = ?";
+	private String GET_QRY = "SELECT * FROM teams WHERE id = ?";
+	private String GET_FOR_HUNT_QRY = "SELECT * FROM teams WHERE hunt_id = ? ORDER BY name";
+	private String LOGIN_FOR_HUNT_QRY = "SELECT * FROM teams WHERE name = ? AND password = ? AND hunt_id = ?";
 	
-	/**
-	 * 
-	 * @param account
-	 * @param db
-	 * @return
-	 */
-	public Team upsert(Team team, DB db) 
+	private Vector<Team> process(ResultSet rs) throws Exception
 	{
-		DBCollection col = getCollection(db);	
-		col.update(new BasicDBObject("_id", team.getId()), 
-			    team.convertTeamToBasicDBObject(), true, false);
-		return findOne(team.getId(), db);
-	}
-	
-	/**
-	 * 
-	 * @param _id
-	 * @param db
-	 * @return
-	 */
-	public Team findOne(String _id, DB db)
-	{
-		System.out.println("findOne(" + _id + ")");
-		Team team = new Team();
-		BasicDBObject query = new BasicDBObject("_id", _id);
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
-
-		try
+		Vector<Team> objs = new Vector<Team>();
+		while (rs.next())
 		{
-			System.out.println("inside try");
-			while(cursor.hasNext()) 
-			{
-				System.out.println("inside while");
-				team.convertDBObjectToTeam(cursor.next());
-			}
-		} 
-		finally 
-		{
-		   cursor.close();
+			objs.add(new Team(rs.getString("id"), 
+							  rs.getString("hunt_id"), 
+							  rs.getString("name"), 
+							  rs.getString("score"), 
+							  rs.getString("password")));
 		}
-		return team;
+		return objs;
+	}
+	
+	private Vector<Team> executeSql(Connection c, String sql, String action, Team obj) throws Exception
+	{
+		// instantiate list object
+		Vector<Team> objs = new Vector<Team>();
+
+		// the one prepared statement
+		PreparedStatement pst = c.prepareStatement(sql);
+		
+		// work per action
+		if (action.equals(INSERT))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getHuntId()));
+			pst.setString(2, obj.getName());
+			pst.setInt(3, Integer.parseInt(obj.getScore()));
+			
+			id = 0;
+			pst.executeUpdate();
+			ResultSet rs = pst.getGeneratedKeys();
+			if (rs.next())
+				id = rs.getInt(1);
+			rs.close();
+		}
+		else if (action.equals(UPDATE))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getHuntId()));
+			pst.setString(2, obj.getName());
+			pst.setInt(3, Integer.parseInt(obj.getScore()));
+			pst.setInt(4, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}		
+		else if (action.equals(GET))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}
+		else if (action.equals(GET_FOR_HUNT))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getHuntId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}		
+		else if (action.equals(LOGIN_FOR_HUNT))
+		{
+			pst.setString(1, obj.getName());
+			pst.setString(2, obj.getPassword());
+			pst.setInt(3, Integer.parseInt(obj.getHuntId()));
+			ResultSet rs = pst.executeQuery();
+			objs = process(rs);
+			rs.close();
+		}		
+		
+		// close prepared statement
+		pst.close();
+		
+		// ensure we never return a null list
+		if (objs == null)
+			objs = new Vector<Team>();
+		
+		return objs;
+	}
+	
+	// *********************************************************************************
+	// start public stuff
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public int insert(Connection c, Team obj) throws Exception
+	{
+		executeSql(c, INSERT_QRY, INSERT, obj);
+		return id;
 	}
 	
 	/**
 	 * 
-	 * @param db
-	 * @return
+	 * @param c
+	 * @param obj
+	 * @throws Exception
 	 */
-	public ArrayList<Team> getAllForHunt(Hunt hunt, DB db)
+	public void update(Connection c, Team obj) throws Exception
 	{
-		ArrayList<Team> team = new ArrayList<Team>();
-
-		BasicDBObject query = new BasicDBObject("huntId", hunt.getId());
-		DBCollection col = getCollection(db);
-		DBCursor cursor = col.find(query);
-		
-		try 
-		{	
-		   while(cursor.hasNext()) 
-		   {
-			   team.add(new Team(cursor.next()));
-		   }
-		} 
-		finally 
-		{
-		   cursor.close();
-		}
-		return team;
+		executeSql(c, UPDATE_QRY, UPDATE, obj);
 	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Team get(Connection c, Team obj) throws Exception
+	{
+		Team t = new Team();
 		
+		Vector <Team> objs = executeSql(c, GET_QRY, GET, obj);
+		
+		if (objs != null)
+			t = objs.get(0);
+		
+		return t;
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Vector<Team> getForHunt(Connection c, Team obj) throws Exception
+	{
+		return executeSql(c, GET_FOR_HUNT_QRY, GET_FOR_HUNT, obj);
+	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public Team loginForHunt(Connection c, Team obj) throws Exception
+	{
+		Team t = new Team();
+		
+		Vector <Team> objs = executeSql(c, LOGIN_FOR_HUNT_QRY, LOGIN_FOR_HUNT, obj);
+		
+		if (objs != null && objs.size() > 0)
+			t = objs.get(0);
+		
+		return t;
+	}	
 }

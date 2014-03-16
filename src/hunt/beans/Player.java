@@ -40,7 +40,7 @@ public class Player extends BeanUtils
 	// --------------------------------------------------------------------------------------	
 	// variables
 	private String[] cols = {"id","teamId","firstName","lastName","email","phoneNumber"};
-	private Hashtable<String,Object> data;
+	private Hashtable<String,Object> data = new Hashtable<String,Object>();
 	private String json;
 	
 	// --------------------------------------------------------------------------------------

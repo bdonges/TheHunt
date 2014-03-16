@@ -1,5 +1,6 @@
 package hunt.business;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ import hunt.db.TeamLocationManager;
 
 import com.mongodb.DB;
 
-public class TeamResultsCommand 
+public class TeamResultsCommand extends Command
 {
 
 	public TeamResultsCommand() 
@@ -28,25 +29,9 @@ public class TeamResultsCommand
 	 * @param db
 	 * @return
 	 */
-	public Team getTeamResultsForHunt(Team team, Hunt hunt, DB db)
+	public Team getTeamResultsForHunt(Connection con, Team team, Hunt hunt)
 	{
-		TeamLocationManager tlMgr = new TeamLocationManager();
-		
-		List<TeamLocation> locs = tlMgr.getAllForTeam(team, db);
-		List<TeamLocation> locsWithAnswers = new ArrayList<TeamLocation>();
-		if (locs != null && locs.size() > 0)
-		{
-			for (TeamLocation loc : locs)
-			{
-				locsWithAnswers.add(getLocationAndAnswers(loc, db));
-			}
-			team.setTeamLoations(locsWithAnswers);
-		}
-		else
-		{
-			team.setTeamLoations(new ArrayList<TeamLocation>());
-		}
-	
+
 		return team;
 	}
 	
@@ -56,20 +41,8 @@ public class TeamResultsCommand
 	 * @param db
 	 * @return
 	 */
-	public TeamLocation getLocationAndAnswers(TeamLocation tl, DB db)
+	public TeamLocation getLocationAndAnswers(Connection con, TeamLocation tl)
 	{
-		List<TeamAnswer> answers = new TeamAnswerManager().getAllForTeamLocation(tl, db);
-		List<TeamAnswer> answersWithQuestions = new ArrayList<TeamAnswer>();
-		if (answers != null && answers.size() > 0)
-		{
-			for (TeamAnswer answer : answers)
-			{
-				answer = getTeamAnswerWithQuestion(answer, db);
-				answersWithQuestions.add(answer);
-			}
-		}
-		
-		tl.setTeamAnswers(answersWithQuestions);
 		return tl;
 	}
 	
@@ -79,9 +52,8 @@ public class TeamResultsCommand
 	 * @param db
 	 * @return
 	 */
-	public TeamAnswer getTeamAnswerWithQuestion(TeamAnswer answer, DB db)
+	public TeamAnswer getTeamAnswerWithQuestion(Connection con, TeamAnswer answer)
 	{
-		answer.setQuestion(new QuestionManager().findOne(answer.getQuestionId(), db));
 		return answer;
 	}
 }

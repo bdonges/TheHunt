@@ -45,7 +45,7 @@ public class Location extends BeanUtils
 	// --------------------------------------------------------------------------------------	
 	// variables
 	private String[] cols = {"id", "huntId","name", "code","key","address","phoneNumber","specialLocationId","hasSpecial"};
-	private Hashtable<String,Object> data;
+	private Hashtable<String,Object> data = new Hashtable<String,Object>();
 	private String json;
 	
 	private List<Question> questions = new ArrayList<Question>();
