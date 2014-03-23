@@ -3,15 +3,8 @@ package hunt.db;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
 import java.util.Vector;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-
-import hunt.beans.Location;
 import hunt.beans.Question;
 
 public class QuestionManager 
@@ -22,14 +15,16 @@ public class QuestionManager
 	private String INSERT = "INSERT";
 	private String UPDATE = "UPDATE";
 	private String DELETE = "DELETE";
+	private String DELETE_FOR_LOCATION = "DELETE_FOR_LOCATION";
 	private String GET = "GET";
 	private String GET_FOR_LOCATION = "GET_FOR_LOCATION";
 	
 	private String INSERT_QRY = "INSERT INTO questions (location_id, question, answer, points) values (?,?,?,?)";
 	private String UPDATE_QRY = "UPDATE questions SET location_id = ?, question = ?, answer = ?, points = ? WHERE id = ?";
 	private String DELETE_QRY = "DELETE FROM questions WHERE id = ?";
+	private String DELETE_FOR_LOCATION_QRY = "DELETE FROM questions WHERE location_id = ?";
 	private String GET_QRY = "SELECT * FROM questions WHERE id = ?";
-	private String GET_FOR_LOCATION_QRY = "SELECT * FROM questions WHERE location_id = ? ORDER BY question";
+	private String GET_FOR_LOCATION_QRY = "SELECT * FROM questions WHERE location_id = ? ORDER BY question_order";
 	
 	private Vector<Question> process(ResultSet rs) throws Exception
 	{
@@ -40,7 +35,8 @@ public class QuestionManager
 								  rs.getString("location_id"),
 								  rs.getString("question"),
 								  rs.getString("answer"),
-								  rs.getString("points")));
+								  rs.getString("points"),
+								  rs.getString("question_order")));
 		}
 		return objs;
 	}
@@ -60,6 +56,7 @@ public class QuestionManager
 			pst.setString(2, obj.getQuestion());
 			pst.setString(3, obj.getAnswer());
 			pst.setString(4, obj.getPoints());
+			pst.setInt(5, Integer.parseInt(obj.getQuestionOrder()));
 			
 			id = 0;
 			pst.executeUpdate();
@@ -74,7 +71,8 @@ public class QuestionManager
 			pst.setString(2, obj.getQuestion());
 			pst.setString(3, obj.getAnswer());
 			pst.setString(4, obj.getPoints());
-			pst.setInt(5, Integer.parseInt(obj.getId()));
+			pst.setInt(5, Integer.parseInt(obj.getQuestionOrder()));
+			pst.setInt(6, Integer.parseInt(obj.getId()));
 			pst.execute();
 		}		
 		else if (action.equals(DELETE))
@@ -82,6 +80,11 @@ public class QuestionManager
 			pst.setInt(1, Integer.parseInt(obj.getId()));
 			pst.execute();
 		}
+		else if (action.equals(DELETE_FOR_LOCATION))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getLocationId()));
+			pst.execute();
+		}		
 		else if (action.equals(GET))
 		{
 			pst.setInt(1, Integer.parseInt(obj.getId()));
@@ -159,7 +162,7 @@ public class QuestionManager
 	 * @return
 	 * @throws Exception
 	 */
-	public Vector<Question> getLocationsForHunt(Connection c, Question obj) throws Exception
+	public Vector<Question> getQuestionsForLocation(Connection c, Question obj) throws Exception
 	{
 		return executeSql(c, GET_FOR_LOCATION_QRY, GET_FOR_LOCATION, obj);
 	}
@@ -174,5 +177,16 @@ public class QuestionManager
 	{
 		executeSql(c, DELETE_QRY, DELETE, obj);
 	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public void deleteForLocation(Connection c, Question obj) throws Exception
+	{
+		executeSql(c, DELETE_FOR_LOCATION_QRY, DELETE_FOR_LOCATION, obj);
+	}	
 		
 }

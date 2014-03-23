@@ -14,15 +14,18 @@ public class PlayerManager
 	
 	private String INSERT = "INSERT";
 	private String UPDATE = "UPDATE";
+	private String UPDATE_TEAM = "UPDATE_TEAM";
 	private String DELETE = "DELETE";
 	private String GET = "GET";
 	private String GET_FOR_TEAM = "GET_FOR_TEAM";
 	
 	private String INSERT_QRY = "INSERT INTO players (team_id, first_name, last_name, email, phone_number) values (?,?,?,?,?)";
 	private String UPDATE_QRY = "UPDATE players SET team_id = ?, first_name = ?, last_name = ?, email = ?, phone_number = ? WHERE id = ?";
+	private String UPDATE_TEAM_QRY = "UPDATE players SET team_id = ? WHERE id = ?";
 	private String DELETE_QRY = "DELETE FROM players WHERE id = ?";
 	private String GET_QRY = "SELECT * FROM players WHERE id = ?";
 	private String GET_FOR_TEAM_QRY = "SELECT * FROM players WHERE team_id = ? ORDER BY last_name, first_name";
+	
 	
 	private Vector<Player> process(ResultSet rs) throws Exception
 	{
@@ -71,6 +74,12 @@ public class PlayerManager
 			pst.setString(4, obj.getEmail());
 			pst.setString(5, obj.getPhoneNumber());			
 			pst.setInt(6, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}
+		else if (action.equals(UPDATE_TEAM))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getTeamId()));
+			pst.setInt(2, Integer.parseInt(obj.getId()));
 			pst.execute();
 		}
 		else if (action.equals(DELETE))
@@ -135,6 +144,18 @@ public class PlayerManager
 	 * @param obj
 	 * @throws Exception
 	 */
+	public void updateTeam(Connection c, Player obj) throws Exception
+	{
+		executeSql(c, UPDATE_TEAM_QRY, UPDATE_TEAM, obj);
+	}
+		
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
 	public void delete(Connection c, Player obj) throws Exception
 	{
 		executeSql(c, DELETE_QRY, DELETE, obj);
@@ -166,16 +187,9 @@ public class PlayerManager
 	 * @return
 	 * @throws Exception
 	 */
-	public Player getForTeam(Connection c, Player obj) throws Exception
+	public Vector<Player> getForTeam(Connection c, Player obj) throws Exception
 	{
-		Player p = new Player();
-		
-		Vector <Player> objs = executeSql(c, GET_FOR_TEAM_QRY, GET_FOR_TEAM, obj);
-		
-		if (objs != null && objs.size() > 0)
-			p = objs.get(0);
-		
-		return p;
+		return executeSql(c, GET_FOR_TEAM_QRY, GET_FOR_TEAM, obj);
 	}
 	
 

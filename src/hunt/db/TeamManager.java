@@ -15,12 +15,14 @@ public class TeamManager
 	private String UPDATE = "UPDATE";
 	private String GET = "GET";
 	private String GET_FOR_HUNT = "GET_FOR_HUNT";
+	private String DELETE = "DELETE";
 	private String LOGIN_FOR_HUNT = "LOGIN_FOR_HUNT";
 	
 	private String INSERT_QRY = "INSERT INTO teams (hunt_id, name, score) values (?,?,?)";
 	private String UPDATE_QRY = "UPDATE teams SET hunt_id = ?, name = ?, score = ? WHERE id = ?";
 	private String GET_QRY = "SELECT * FROM teams WHERE id = ?";
 	private String GET_FOR_HUNT_QRY = "SELECT * FROM teams WHERE hunt_id = ? ORDER BY name";
+	private String DELETE_QRY = "DELETE FROM teams WHERE id = ?";
 	private String LOGIN_FOR_HUNT_QRY = "SELECT * FROM teams WHERE name = ? AND password = ? AND hunt_id = ?";
 	
 	private Vector<Team> process(ResultSet rs) throws Exception
@@ -80,7 +82,12 @@ public class TeamManager
 			ResultSet rs = pst.executeQuery();
 			objs = process(rs);
 			rs.close();
-		}		
+		}
+		else if (action.equals(DELETE))
+		{
+			pst.setInt(1, Integer.parseInt(obj.getId()));
+			pst.execute();
+		}
 		else if (action.equals(LOGIN_FOR_HUNT))
 		{
 			pst.setString(1, obj.getName());
@@ -125,6 +132,17 @@ public class TeamManager
 	public void update(Connection c, Team obj) throws Exception
 	{
 		executeSql(c, UPDATE_QRY, UPDATE, obj);
+	}
+	
+	/**
+	 * 
+	 * @param c
+	 * @param obj
+	 * @throws Exception
+	 */
+	public void delete(Connection c, Team obj) throws Exception
+	{
+		executeSql(c, DELETE_QRY, DELETE, obj);
 	}
 	
 	/**

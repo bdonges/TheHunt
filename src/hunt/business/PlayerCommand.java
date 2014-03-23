@@ -1,18 +1,31 @@
 package hunt.business;
 
-import com.mongodb.DB;
+import java.sql.Connection;
+import java.util.Vector;
 
 import hunt.beans.Player;
-import hunt.beans.Team;
 import hunt.db.PlayerManager;
-import hunt.db.TeamManager;
 
 public class PlayerCommand extends Command
 {
 
+	private PlayerManager mgr = new PlayerManager();
+	
 	public PlayerCommand()
 	{
 		
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param teamId
+	 * @return
+	 * @throws Exception
+	 */
+	public Vector<Player> getPlayersForTeam(Connection con, String teamId) throws Exception
+	{
+		return mgr.getForTeam(con, new Player("","","","","",teamId));
 	}
 	
 	/**
@@ -22,24 +35,44 @@ public class PlayerCommand extends Command
 	 * @param email
 	 * @param phoneNumber
 	 * @param teamId
-	 * @param db
 	 * @return
+	 * @throws Exception 
 	 */
-	public boolean addPlayerToTeam(String firstName, String lastName, String email, String phoneNumber, String teamId, DB db)
+	public Player addPlayer(Connection con, String firstName, String lastName, String email, String phoneNumber, String teamId) throws Exception
 	{
-		boolean added = true;
+		Player p = new Player("", teamId, firstName, lastName, email, phoneNumber);
 		
+		p.setId(String.valueOf(mgr.insert(con, p)));
+		p = mgr.get(con, p);
+		
+		return p;
+	}
 
-		return added;
+	/**
+	 * 
+	 * @param con
+	 * @param id
+	 * @throws Exception
+	 */
+	public void deletePlayer(Connection con, String id) throws Exception
+	{
+		mgr.delete(con, new Player(id, "", "", "", "", ""));
 	}
 	
-	public boolean movePlayer(String playerId, String oldTeamId, String newTeamId, DB db)
+	/**
+	 * 
+	 * @param con
+	 * @param id
+	 * @param newTeamId
+	 * @return
+	 * @throws Exception
+	 */
+	public Player updatePlayer(Connection con, String id, String newTeamId) throws Exception
 	{
-		boolean moved = true;
-		
-
-		
-		return moved;
+		Player p = mgr.get(con, new Player(id, "", "", "", "", ""));
+		p.setTeamId(newTeamId);
+		mgr.updateTeam(con, p);
+		return p;
 	}
 	
 	/**

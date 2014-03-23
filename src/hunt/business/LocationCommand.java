@@ -1,8 +1,7 @@
 package hunt.business;
 
 import java.sql.Connection;
-
-import com.mongodb.DB;
+import java.util.Vector;
 
 import hunt.beans.Account;
 import hunt.beans.Hunt;
@@ -16,9 +15,8 @@ public class LocationCommand extends Command
 	
 	public LocationCommand()
 	{
-		
 	}
-	
+
 	/**
 	 * 
 	 * @param con
@@ -70,9 +68,55 @@ public class LocationCommand extends Command
 	 * @return
 	 * @throws Exception
 	 */
-	public Location getLocation(Connection con, String locationId) throws Exception
+	public Location getLocation(Connection con, String id) throws Exception
 	{
-		return mgr.get(con, new Location(locationId, "", "", "", "", "", "", "", ""));
+		return mgr.get(con, new Location(id, "", "", "", "", "", "", "", ""));
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public Location getLocationAndQuestions(Connection con, String id) throws Exception
+	{
+		Location l =  mgr.get(con, new Location(id, "", "", "", "", "", "", "", ""));
+		l.setQuestions(new QuestionCommand().getQuestionsForLocation(con, id));
+		return l;
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param huntId
+	 * @return
+	 * @throws Exception
+	 */
+	public Vector<Location> getLocationsForHunt(Connection con, String huntId) throws Exception
+	{
+		return mgr.getLocationsForHunt(con, new Location("", huntId, "", "", "", "", "", "", ""));
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param huntId
+	 * @return
+	 * @throws Exception
+	 */
+	public Vector<Location> getLocationsWithQuestionsForHunt(Connection con, String huntId) throws Exception
+	{
+		Vector<Location> locations = new Vector<Location>();
+		QuestionCommand qcmd = new QuestionCommand();
+		Vector<Location> v = mgr.getLocationsForHunt(con, new Location("", huntId, "", "", "", "", "", "", ""));
+		for (Location l : v)
+		{
+			l.setQuestions(qcmd.getQuestionsForLocation(con, l.getId()));
+			locations.add(l);
+		}
+		return locations;
 	}
 	
 	/**
@@ -121,6 +165,17 @@ public class LocationCommand extends Command
 		Location l2 = mgr.get(c, l1);
 		l2.show();
 		
+		// adding questions to location
+		System.out.println("   adding questions to location...");
+		new QuestionCommand().insertQuestion(c, h.getId(), l2.getId(), "what is your favorite color?", "orange and blue", "5", "1");
+		new QuestionCommand().insertQuestion(c, h.getId(), l2.getId(), "what is your favorite fruit?", "apple", "4", "2");
+		
+		// get location
+		System.out.println("   getting location and questions...");
+		l2 = getLocationAndQuestions(c, l2.getId());
+		l2.show();
+		System.out.println("    number of questions?  " + l2.getQuestions().size());
+		
 		// update location
 		System.out.println("   updating location...");		
 		l2.setName("NAME_U");
@@ -134,6 +189,16 @@ public class LocationCommand extends Command
 		System.out.println("   getting location...");
 		Location l3 = mgr.get(c, l2);
 		l3.show();
+		
+		// get locations for hunt
+		System.out.println("   getting location for hunt...");
+		Vector<Location> v1 = getLocationsForHunt(c, h.getId());
+		System.out.println("   number of locations for hunt " + h.getId() + " is " + v1.size());
+		
+		// get locations with questions for hunt
+		System.out.println("   get locations with questions for hunt...");
+		Vector<Location> v2 = getLocationsWithQuestionsForHunt(c, h.getId());
+		System.out.println("   number of locations for hunt " + h.getId() + " is " + v2.size());
 		
 		// delete location
 		System.out.println("   deleting location...");

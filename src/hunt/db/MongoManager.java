@@ -1,7 +1,5 @@
 package hunt.db;
 
-import hunt.business.HuntCommand;
-
 import java.net.UnknownHostException;
 import java.util.Set;
 

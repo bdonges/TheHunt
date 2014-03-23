@@ -1,14 +1,13 @@
 package hunt.business;
 
 import java.sql.Connection;
+import java.util.Vector;
 
 import hunt.beans.Account;
 import hunt.beans.Hunt;
 import hunt.beans.Location;
 import hunt.beans.Question;
 import hunt.db.QuestionManager;
-
-import com.mongodb.DB;
 
 public class QuestionCommand extends Command
 {
@@ -19,21 +18,122 @@ public class QuestionCommand extends Command
 	{
 		
 	}
-	
-	// "id", "locationId", "question", "answer", "points"}
-	
-	public Question updateQuestion(String questionId, String huntId, String locationId, String question, String answer, String points, DB db)
+
+	/**
+	 * 
+	 * @param con
+	 * @param id
+	 * @param answerEntered
+	 * @return
+	 * @throws Exception
+	 */
+	public int scoreAnswer(Connection con, String id, String answerEntered) throws Exception
 	{
-		Question q = new Question(questionId, locationId, question, answer, points);
+		int points = 0;
+		Question q = mgr.get(con, new Question(id, "", "", "", "", ""));
 		
-		return q;
+		if (answerEntered.toLowerCase().trim().equals(q.getAnswer().toLowerCase().trim()))
+			points = Integer.parseInt(q.getPoints());
+		
+		return points;
 	}
 	
-	public void deleteQuestionsForLocation(String locationId, DB db)
+	/**
+	 * 
+	 * @param con
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public Question getQuestion(Connection con, String id) throws Exception
 	{
-		
+		return mgr.get(con, new Question(id, "", "", "", "", ""));
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param locationId
+	 * @return
+	 * @throws Exception
+	 */
+	public Vector<Question> getQuestionsForLocation(Connection con, String locationId) throws Exception
+	{
+		return mgr.getQuestionsForLocation(con, new Question("", locationId, "", "", "", ""));
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param huntId
+	 * @param locationId
+	 * @param question
+	 * @param answer
+	 * @param points
+	 * @param questionOrder
+	 * @return
+	 * @throws Exception
+	 */
+	public Question insertQuestion(Connection con, 
+			   String huntId, 
+			   String locationId, 
+			   String question, 
+			   String answer, 
+			   String points,
+			   String questionOrder) throws Exception
+    {
+		int id = mgr.insert(con, new Question("", locationId, question, answer, points, questionOrder));
+		return mgr.get(con, new Question(String.valueOf(id), "", "", "", "", ""));
+    }	
+	
+	/**
+	 * 
+	 * @param con
+	 * @param questionId
+	 * @param huntId
+	 * @param locationId
+	 * @param question
+	 * @param answer
+	 * @param points
+	 * @return
+	 * @throws Exception
+	 */
+	public Question updateQuestion(Connection con, 
+								   String id, 
+								   String huntId, 
+								   String locationId, 
+								   String question, 
+								   String answer, 
+								   String points,
+								   String questionOrder) throws Exception
+	{
+		Question q = new Question(id, locationId, question, answer, points, questionOrder);
+		mgr.update(con, q);
+		return mgr.get(con, q);
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param locationId
+	 * @throws Exception
+	 */
+	public void deleteQuestionsForLocation(Connection con, String locationId) throws Exception
+	{
+		mgr.deleteForLocation(con, new Question("", locationId, "", "", "", ""));
 	}
 
+	/**
+	 * 
+	 * @param con
+	 * @param id
+	 * @throws Exception
+	 */
+	public void deleteQuestion(Connection con, String id) throws Exception
+	{
+		mgr.delete(con, new Question(id, "", "", "", "", ""));
+	}	
+	
 	/**
 	 * 
 	 * @throws Exception
@@ -60,7 +160,7 @@ public class QuestionCommand extends Command
 		
 		// create question object
 		System.out.println("   setting up object...");
-		Question q1 = new Question("", l.getId(), "What is your favorite color?", "Red", "10");
+		Question q1 = new Question("", l.getId(), "What is your favorite color?", "Red", "10", "1");
 		q1.show();
 		
 		// insert question
@@ -78,6 +178,7 @@ public class QuestionCommand extends Command
 		q2.setQuestion("How old are you? U");
 		q2.setAnswer("10 U");
 		q2.setPoints("40");
+		q2.setQuestionOrder("2");
 		mgr.update(c, q2);
 		
 		// get question

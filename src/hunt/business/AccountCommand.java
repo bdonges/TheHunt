@@ -58,7 +58,7 @@ public class AccountCommand extends Command
 	 * @param password
 	 * @throws Exception
 	 */
-	public void updateAccount(Connection con,
+	public Account updateAccount(Connection con,
 							  int accountId,
 			 				  String firstName, 
 			 				  String lastName, 
@@ -68,6 +68,7 @@ public class AccountCommand extends Command
 			 				  String password) throws Exception
     {
 		mgr.update(con, new Account(String.valueOf(accountId), firstName, lastName, email, phoneNumber, username, password));
+		return mgr.get(con, new Account(String.valueOf(accountId), "", "", "", "", "", ""));
     }	
 	
 	/**
