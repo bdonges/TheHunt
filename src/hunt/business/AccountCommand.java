@@ -11,6 +11,19 @@ public class AccountCommand extends Command
 	private AccountManager mgr = new AccountManager();
 	
 	/**
+	 *  
+	 * @param con
+	 * @param username
+	 * @param password
+	 * @return
+	 * @throws Exception
+	 */
+	public Account login(Connection con, String username, String password) throws Exception 
+	{
+		return mgr.login(con, new Account("", "", "", "", "", username, password));
+	}
+	
+	/**
 	 * 
 	 * @param con
 	 * @param accountId

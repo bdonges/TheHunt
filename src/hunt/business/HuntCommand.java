@@ -12,6 +12,16 @@ public class HuntCommand extends Command
 
 	HuntManager mgr = new HuntManager();
 	
+	public Hunt getHuntStatus(Connection con, String id) throws Exception 
+	{
+		Hunt h = mgr.get(con, new Hunt(id, "", "", ""));
+		
+		h.setTeams(new TeamCommand().getAllTeamResultsForHunt(con, id));
+		h.setLocations(new LocationCommand().getLocationsForHunt(con, id));
+		
+		return h;
+	}
+	
 	/**
 	 * 
 	 * @return
@@ -31,11 +41,9 @@ public class HuntCommand extends Command
 	 * @return
 	 * @throws Exception
 	 */
-	public Hunt getHunt(Connection con, int huntId) throws Exception
+	public Hunt getHunt(Connection con, String huntId) throws Exception
 	{
-		Hunt hunt = new Hunt();
-		hunt = mgr.get(con, new Hunt(String.valueOf(huntId), "", "", ""));
-		return hunt;
+		return mgr.get(con, new Hunt(huntId, "", "", ""));
 	}
 	
 	/**

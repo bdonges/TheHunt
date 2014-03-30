@@ -1,5 +1,6 @@
 package hunt.business;
 
+import hunt.beans.Hunt;
 import hunt.beans.Team;
 import hunt.db.TeamManager;
 
@@ -83,6 +84,18 @@ public class TeamCommand extends Command
 	/**
 	 * 
 	 * @param con
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	public Team getTeam(Connection con, String id) throws Exception
+	{
+		return mgr.get(con, new Team(id, "", "", "", ""));
+	}
+	
+	/**
+	 * 
+	 * @param con
 	 * @param huntId
 	 * @return
 	 */
@@ -103,10 +116,14 @@ public class TeamCommand extends Command
 		Vector<Team> teamsWithResults = new Vector<Team>();
 		Vector<Team> teams = getTeamsForHunt(con, huntId);
 		
+		Hunt hunt = new HuntCommand().getHunt(con, huntId);
+		
+		TeamResultsCommand trcmd = new TeamResultsCommand();
 		
 		for (Team team : teams)
 		{
-			
+			team = trcmd.getTeamResultsForHunt(con, team, hunt);
+			teamsWithResults.add(team);
 		}
 		
 		return teamsWithResults;
