@@ -2,17 +2,18 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" id="WebApp_ID" version="3.0">
   <display-name>TheHunt</display-name>
   <welcome-file-list>
-    <welcome-file>index.jsp</welcome-file>
+    <welcome-file>login.jsp</welcome-file>
   </welcome-file-list>
   
   <servlet>
-    <servlet-name>gateway</servlet-name>
-    <servlet-class>hunt.web.Gateway.java</servlet-class>
-  </servlet>
+    <servlet-name>login</servlet-name>
+    <servlet-class>hunt.web.Login</servlet-class>
+  </servlet>  
+  
 
   <servlet-mapping>
-    <servlet-name>gateway</servlet-name>
-    <url-pattern>/gateway</url-pattern>
+    <servlet-name>login</servlet-name>
+    <url-pattern>/login</url-pattern>
   </servlet-mapping>    
  
 </web-app>

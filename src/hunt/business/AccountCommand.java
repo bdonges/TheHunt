@@ -20,6 +20,7 @@ public class AccountCommand extends Command
 	 */
 	public Account login(Connection con, String username, String password) throws Exception 
 	{
+		
 		return mgr.login(con, new Account("", "", "", "", "", username, password));
 	}
 	
@@ -33,6 +34,20 @@ public class AccountCommand extends Command
 	public Account getAccount(Connection con, int accountId) throws Exception
 	{
 		return mgr.get(con, new Account(String.valueOf(accountId), "", "", "", "", "", ""));
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param accountId
+	 * @return
+	 * @throws Exception
+	 */
+	public Account getAccountWithHunts(Connection con, int accountId) throws Exception
+	{
+		Account account = mgr.get(con, new Account(String.valueOf(accountId), "", "", "", "", "", ""));
+		account.setHunts(new HuntCommand().getHuntsForAccount(con, accountId));
+		return account;
 	}
 	
 	/**
@@ -92,7 +107,7 @@ public class AccountCommand extends Command
 	 */
 	public void deleteAccount(Connection con, int accountId) throws Exception 
 	{
-		mgr.delete(con, new Account(String.valueOf("accountId"), "", "", "", "", "", ""));
+		mgr.delete(con, new Account(String.valueOf(accountId), "", "", "", "", "", ""));
 	}
 	
 	/**

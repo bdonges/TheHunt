@@ -30,7 +30,7 @@ public class HuntManager
 		while (rs.next())
 		{
 			objs.add(new Hunt(rs.getString("id"), 
-					          rs.getString("accountId"), 
+					          rs.getString("account_id"), 
 					          rs.getString("name"), 
 					          rs.getString("run_date")));
 		}

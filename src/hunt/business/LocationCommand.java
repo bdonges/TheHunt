@@ -7,6 +7,7 @@ import hunt.beans.Account;
 import hunt.beans.Hunt;
 import hunt.beans.Location;
 import hunt.db.LocationManager;
+import hunt.utils.LoggerUtil;
 
 public class LocationCommand extends Command
 {
@@ -96,7 +97,11 @@ public class LocationCommand extends Command
 	 */
 	public Vector<Location> getLocationsForHunt(Connection con, String huntId) throws Exception
 	{
-		return mgr.getLocationsForHunt(con, new Location("", huntId, "", "", "", "", "", "", ""));
+		LoggerUtil.logToOut("LocationCommand.getLocationsForHunt("+huntId+")");
+		Location location = new Location();
+		location.setHuntId(huntId);
+		LoggerUtil.logToOut("LocationCommand.getLocationsForHunt() - huntId from location object: " + location.getHuntId());
+		return mgr.getLocationsForHunt(con, location);
 	}
 	
 	/**

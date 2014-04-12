@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.util.Vector;
 
 import hunt.beans.Location;
+import hunt.utils.LoggerUtil;
 
 public class LocationManager 
 {
@@ -165,6 +166,7 @@ public class LocationManager
 	 */
 	public Vector<Location> getLocationsForHunt(Connection c, Location obj) throws Exception
 	{
+		LoggerUtil.logToOut("LocationManager.getLocationsForHunt("+obj.getHuntId()+")");
 		return executeSql(c, GET_FOR_HUNT_QRY, GET_FOR_HUNT, obj);
 	}
 

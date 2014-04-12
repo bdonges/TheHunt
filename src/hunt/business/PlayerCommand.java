@@ -19,6 +19,19 @@ public class PlayerCommand extends Command
 	/**
 	 * 
 	 * @param con
+	 * @param playerId
+	 * @return
+	 * @throws Exception
+	 */
+	public Player getPlayer(Connection con, String playerId) throws Exception
+	{
+		return mgr.get(con, new Player(playerId, "", "", "", "", ""));
+	}
+	
+	
+	/**
+	 * 
+	 * @param con
 	 * @param teamId
 	 * @return
 	 * @throws Exception
@@ -67,12 +80,30 @@ public class PlayerCommand extends Command
 	 * @return
 	 * @throws Exception
 	 */
-	public Player updatePlayer(Connection con, String id, String newTeamId) throws Exception
+	public Player updatePlayersTeam(Connection con, String id, String newTeamId) throws Exception
 	{
 		Player p = mgr.get(con, new Player(id, "", "", "", "", ""));
 		p.setTeamId(newTeamId);
 		mgr.updateTeam(con, p);
 		return p;
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param id
+	 * @param teamId
+	 * @param firstName
+	 * @param lastName
+	 * @param email
+	 * @param phone
+	 * @return
+	 * @throws Exception
+	 */
+	public Player updatePlayer(Connection con, String id, String teamId, String firstName, String lastName, String email, String phone) throws Exception
+	{
+		mgr.update(con, new Player(id, teamId, firstName, lastName, email, phone));
+		return mgr.get(con, new Player(id, "", "", "", "", ""));
 	}
 	
 	/**

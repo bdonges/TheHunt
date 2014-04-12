@@ -1,8 +1,8 @@
 package hunt.beans;
 
-import java.util.ArrayList;
+import hunt.utils.LoggerUtil;
+
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Vector;
 
 import com.mongodb.BasicDBObject;
@@ -34,6 +34,7 @@ public class Location extends BeanUtils
 	{
 		this.setId(id);
 		this.setHuntId(huntId);
+		LoggerUtil.logToOut("LocationConstructor... huntId passed: " + huntId + ", huntId set: " + this.getHuntId());
 		this.setName(name);
 		this.setCode(code);
 		this.setKey(key);
@@ -45,7 +46,7 @@ public class Location extends BeanUtils
 	
 	// --------------------------------------------------------------------------------------	
 	// variables
-	private String[] cols = {"id", "huntId","name", "code","key","address","phoneNumber","specialLocationId","hasSpecial"};
+	private String[] cols = {"id", "huntId", "name", "code", "key", "address", "phoneNumber", "specialLocationId", "hasSpecial"};
 	private Hashtable<String,Object> data = new Hashtable<String,Object>();
 	private String json;
 	

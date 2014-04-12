@@ -84,13 +84,27 @@ public class TeamCommand extends Command
 	/**
 	 * 
 	 * @param con
-	 * @param id
+	 * @param teamId
 	 * @return
 	 * @throws Exception
 	 */
-	public Team getTeam(Connection con, String id) throws Exception
+	public Team getTeam(Connection con, String teamId) throws Exception
 	{
-		return mgr.get(con, new Team(id, "", "", "", ""));
+		return mgr.get(con, new Team(teamId, "", "", "", ""));
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param teamId
+	 * @return
+	 * @throws Exception
+	 */
+	public Team getTeamAndPlayers(Connection con, String teamId) throws Exception
+	{
+		Team team = getTeam(con, teamId);
+		team.setPlayers(new PlayerCommand().getPlayersForTeam(con, teamId));
+		return team;
 	}
 	
 	/**

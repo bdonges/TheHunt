@@ -6,6 +6,7 @@ import java.util.Vector;
 import hunt.beans.Account;
 import hunt.beans.Hunt;
 import hunt.db.HuntManager;
+import hunt.utils.LoggerUtil;
 
 public class HuntCommand extends Command
 {
@@ -44,6 +45,22 @@ public class HuntCommand extends Command
 	public Hunt getHunt(Connection con, String huntId) throws Exception
 	{
 		return mgr.get(con, new Hunt(huntId, "", "", ""));
+	}
+	
+	/**
+	 * 
+	 * @param con
+	 * @param huntId
+	 * @return
+	 * @throws Exception
+	 */
+	public Hunt getHuntWithLocationsAndTeams(Connection con, String huntId) throws Exception
+	{
+		LoggerUtil.logToOut("HuntCommand.getHuntWithLocationsAndTeams().  huntId: " + huntId);
+		Hunt hunt = getHunt(con, huntId);
+		hunt.setLocations(new LocationCommand().getLocationsForHunt(con, huntId));
+		hunt.setTeams(new TeamCommand().getTeamsForHunt(con, huntId));
+		return hunt;
 	}
 	
 	/**
@@ -102,10 +119,11 @@ public class HuntCommand extends Command
 		// create account
 		System.out.println("   create account...");
 		Account a = new AccountCommand().insertAccount(c, "test", "account", "testaccount@m.com", "1112223333", "test", "test");
+		a.show();
 		
 		// set up object 
 		System.out.println("   setting up hunt...");
-		Hunt h1 = new Hunt("", a.getId(), "test_hunt", "2/1/2014 12:00:00");
+		Hunt h1 = new Hunt("", a.getId(), "test_hunt", "2014-04-01 12:00:00");
 		h1.show();
 		
 		// insert hunt
@@ -121,7 +139,7 @@ public class HuntCommand extends Command
 		// update hunt
 		System.out.println("   update hunt...");
 		h2.setName("TEST_HUNT_U");
-		h2.setRunDate("3/1/2014 9:00:00");
+		h2.setRunDate("2014-03-01 9:00:00");
 		mgr.update(c, h2);
 		
 		// get hunt
@@ -142,5 +160,23 @@ public class HuntCommand extends Command
 		c.close();
 		
 		System.out.println("end test");		
+	}
+	
+	/**
+	 * 
+	 * @param args
+	 */
+	public static void main(String[] args)
+	{
+		try
+		{
+			HuntCommand c = new HuntCommand();
+			c.test();
+		}
+		catch (Exception e)
+		{
+			System.err.println("exception - message: " + e.getMessage());
+			e.printStackTrace();
+		}
 	}
 }
