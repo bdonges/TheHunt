@@ -87,12 +87,10 @@ public class TeamGateway extends HttpServlet {
 					if (action.equals("editteam"))
 					{
 						Team tmpTeam = tCmd.getTeam(con, teamId);
-						
 						team = tCmd.updateTeam(con, teamId, huntId, name, tmpTeam.getScore(), password);
-
-						msg = "team updated successfully.";
+						msg = "Team updated successfully.";
 					}
-					else if (action.equals("createaccount"))
+					else if (action.equals("createteam"))
 					{
 						team = tCmd.insertTeam(con, huntId, name, "0", password);
 						msg = "Team created successfully";
@@ -117,9 +115,8 @@ public class TeamGateway extends HttpServlet {
 			}
 			else if (action.equals("createnewteam"))
 			{
-				Team team = new Team();
-				team.setHuntId(req.getParameter("huntid"));
 				session.removeAttribute("TEAM");
+				Team team = new Team("0", req.getParameter("huntid"), "", "", "");
 				session.setAttribute("TEAM", team);
 				url = "/editteam.jsp";
 			}
@@ -128,7 +125,7 @@ public class TeamGateway extends HttpServlet {
 		{
 			eMsg = "Exception.  message: " + e.getMessage();
 			e.printStackTrace();
-			url = "/editaccount.jsp";
+			url = "/editteam.jsp";
 		}
 		
 		session.setAttribute("EMSG", eMsg);

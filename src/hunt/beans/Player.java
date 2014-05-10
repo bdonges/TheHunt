@@ -90,7 +90,7 @@ public class Player extends BeanUtils
 	public String getTeamId() { return data.get("teamId").toString(); }
 	public String getFirstName() { return data.get("firstName").toString(); }
 	public String getLastName() { return data.get("lastName").toString(); }
-	public String getEmail() { return data.get("firstName").toString(); }	
+	public String getEmail() { return data.get("email").toString(); }	
 	public String getPhoneNumber() { return data.get("phoneNumber").toString();}
 
 	public void setJson(String json) { this.json = json; }
@@ -98,7 +98,7 @@ public class Player extends BeanUtils
 	public void setTeamId(String teamId) { data.put("teamId",teamId); }
 	public void setFirstName(String firstName) { data.put("firstName",firstName); }
 	public void setLastName(String lastName) { data.put("lastName",lastName); }
-	public void setEmail(String email) { data.put("firstName",email); }	
-	public void setPhoneNumber(String phoneNumber) { data.put("firstName", phoneNumber); }
+	public void setEmail(String email) { data.put("email",email); }	
+	public void setPhoneNumber(String phoneNumber) { data.put("phoneNumber", phoneNumber); }
 	
 }

@@ -98,7 +98,7 @@ public class Question extends BeanUtils
 	public void setId(String id) { data.put("id", id); }
 	public void setLocationId(String locationId) { data.put("locationId",locationId); }
 	public void setQuestion(String question) { data.put("question", question); }
-	public void setAnswer(String answer) { data.put("ansswer",answer); }
+	public void setAnswer(String answer) { data.put("answer",answer); }
 	public void setPoints(String points) { data.put("points",points); }
 	public void setQuestionOrder(String questionOrder) { data.put("questionOrder",questionOrder); }
 

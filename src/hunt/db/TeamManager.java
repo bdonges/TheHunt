@@ -18,13 +18,19 @@ public class TeamManager
 	private String DELETE = "DELETE";
 	private String LOGIN_FOR_HUNT = "LOGIN_FOR_HUNT";
 	
-	private String INSERT_QRY = "INSERT INTO teams (hunt_id, name, score) values (?,?,?)";
-	private String UPDATE_QRY = "UPDATE teams SET hunt_id = ?, name = ?, score = ? WHERE id = ?";
+	private String INSERT_QRY = "INSERT INTO teams (hunt_id, name, score, password) VALUES (?,?,?,?)";
+	private String UPDATE_QRY = "UPDATE teams SET hunt_id = ?, name = ?, score = ?, password = ? WHERE id = ?";
 	private String GET_QRY = "SELECT * FROM teams WHERE id = ?";
 	private String GET_FOR_HUNT_QRY = "SELECT * FROM teams WHERE hunt_id = ? ORDER BY name";
 	private String DELETE_QRY = "DELETE FROM teams WHERE id = ?";
 	private String LOGIN_FOR_HUNT_QRY = "SELECT * FROM teams WHERE name = ? AND password = ? AND hunt_id = ?";
 	
+	/**
+	 * 
+	 * @param rs
+	 * @return
+	 * @throws Exception
+	 */
 	private Vector<Team> process(ResultSet rs) throws Exception
 	{
 		Vector<Team> objs = new Vector<Team>();
@@ -39,13 +45,25 @@ public class TeamManager
 		return objs;
 	}
 	
+	/**
+	 * 
+	 * @param c
+	 * @param sql
+	 * @param action
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
 	private Vector<Team> executeSql(Connection c, String sql, String action, Team obj) throws Exception
 	{
+		if (c.isClosed())
+			throw new Exception("Connection is closed");
+		
 		// instantiate list object
 		Vector<Team> objs = new Vector<Team>();
 
 		// the one prepared statement
-		PreparedStatement pst = c.prepareStatement(sql);
+		PreparedStatement pst = c.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 		
 		// work per action
 		if (action.equals(INSERT))
@@ -53,6 +71,7 @@ public class TeamManager
 			pst.setInt(1, Integer.parseInt(obj.getHuntId()));
 			pst.setString(2, obj.getName());
 			pst.setInt(3, Integer.parseInt(obj.getScore()));
+			pst.setString(4, obj.getPassword());
 			
 			id = 0;
 			pst.executeUpdate();
@@ -67,6 +86,7 @@ public class TeamManager
 			pst.setString(2, obj.getName());
 			pst.setInt(3, Integer.parseInt(obj.getScore()));
 			pst.setInt(4, Integer.parseInt(obj.getId()));
+			pst.setString(5, obj.getPassword());
 			pst.execute();
 		}		
 		else if (action.equals(GET))

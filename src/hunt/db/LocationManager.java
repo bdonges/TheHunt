@@ -18,8 +18,9 @@ public class LocationManager
 	private String GET = "GET";
 	private String GET_FOR_HUNT = "GET_FOR_HUNT";
 	
-	private String INSERT_QRY = "INSERT INTO locations (hunt_id, name, code, key, address, phone, special_location_id, has_special) values (?,?,?,?,?,?,?)";
-	private String UPDATE_QRY = "UPDATE locations SET name = ?, hunt_id = ?, code = ?, key = ?, address = ?, phone = ?, special_location_id = ?, has_special = ? WHERE id = ?";
+	private String INSERT_QRY = "INSERT INTO locations (hunt_id, name, code, key_val, address, phone, special_location_id, has_special) " +
+			                    "VALUES (?,?,?,?,?,?,?,?)";
+	private String UPDATE_QRY = "UPDATE locations SET name = ?, hunt_id = ?, code = ?, key_val = ?, address = ?, phone = ?, special_location_id = ?, has_special = ? WHERE id = ?";
 	private String DELETE_QRY = "DELETE FROM locations WHERE id = ?";
 	private String GET_QRY = "SELECT * FROM locations WHERE id = ?";
 	private String GET_FOR_HUNT_QRY = "SELECT * FROM locations WHERE hunt_id = ? ORDER BY name";
@@ -33,7 +34,7 @@ public class LocationManager
 					              rs.getString("hunt_id"),
 					              rs.getString("name"),
 					              rs.getString("code"),
-					              rs.getString("key"),
+					              rs.getString("key_val"),
 					              rs.getString("address"),
 					              rs.getString("phone"),
 					              rs.getString("special_location_id"),

@@ -99,7 +99,7 @@ public class PlayerGateway extends HttpServlet {
 						player = pCmd.updatePlayer(con, playerId, teamId, firstname, lastname, email, phone);
 						msg = "Player updated successfully.";
 					}
-					else if (action.equals("createaccount"))
+					else if (action.equals("createplayer"))
 					{
 						player = pCmd.addPlayer(con, firstname, lastname, email, phone, teamId);
 						msg = "Player created successfully";
@@ -112,22 +112,28 @@ public class PlayerGateway extends HttpServlet {
 					}
 					
 					session.removeAttribute("PLAYER");
-					session.setAttribute("player", player);
+					session.setAttribute("PLAYER", player);
 				}
 			}
 			else if (action.equals("loadplayer"))
 			{
-				Player player = pCmd.getPlayer((Connection)session.getAttribute("CONNECTION"), req.getParameter("playerid"));
 				session.removeAttribute("PLAYER");
-				session.setAttribute("PLAYER", player);
+				session.setAttribute("PLAYER", pCmd.getPlayer((Connection)session.getAttribute("CONNECTION"), req.getParameter("playerid")));
 				url = "/editplayer.jsp";
 			}
 			else if (action.equals("deleteplayer"))
 			{
 				pCmd.deletePlayer((Connection)session.getAttribute("CONNECTION"), req.getParameter("playerid"));
 				session.removeAttribute("TEAM");
-				session.setAttribute("TEAM", new TeamCommand().getTeam((Connection)session.getAttribute("CONNECTION"), req.getParameter("teamid")));
+				session.setAttribute("TEAM", new TeamCommand().getTeamAndPlayers((Connection)session.getAttribute("CONNECTION"), req.getParameter("teamid")));
 				url = "/editteam.jsp";
+			}
+			else if (action.equals("createnewplayer"))
+			{
+				session.removeAttribute("PLAYER");
+				Player player = new Player("0", req.getParameter("teamid"), "", "", "", "");
+				session.setAttribute("PLAYER", player);
+				url = "/editplayer.jsp";
 			}
 		}
 		catch (Exception e)

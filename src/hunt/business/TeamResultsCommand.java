@@ -1,19 +1,13 @@
 package hunt.business;
 
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Vector;
 
 import hunt.beans.Hunt;
 import hunt.beans.Team;
 import hunt.beans.TeamLocation;
 import hunt.beans.TeamAnswer;
-import hunt.db.QuestionManager;
-import hunt.db.TeamAnswerManager;
 import hunt.db.TeamLocationManager;
-
-import com.mongodb.DB;
 
 public class TeamResultsCommand extends Command
 {

@@ -60,6 +60,7 @@ public class HuntCommand extends Command
 		Hunt hunt = getHunt(con, huntId);
 		hunt.setLocations(new LocationCommand().getLocationsForHunt(con, huntId));
 		hunt.setTeams(new TeamCommand().getTeamsForHunt(con, huntId));
+		LoggerUtil.logToOut("number of locations: " + hunt.getLocations().size() + ", number of teams: " + hunt.getTeams().size());
 		return hunt;
 	}
 	

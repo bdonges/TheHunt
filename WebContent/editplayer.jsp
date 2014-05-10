@@ -26,7 +26,10 @@
         <table width="60%">
             <tr>
                 <td height="50" width="40%" valign="middle">The Hunt Project</td>
-                <td height="50" width="60%" valign="middle"><a href="/TheHunt/logout">logout</a></td>
+                <td height="50" width="60%" valign="middle">
+                    <a href="/TheHunt/teamgateway?a=loadteam&teamid=${PLAYER.getTeamId()}">Back to Team</a>&nbsp;
+                    <a href="/TheHunt/logout">logout</a>
+                </td>
             </tr>        
             <tr>
                 <td height="40" width="40%" valign="middle">Player Detail</td>
@@ -42,7 +45,7 @@
             </tr>
             <tr>
                 <td height="40" width="40%" valign="middle">Phone Number:</td>
-                <td height="40" width="60%" valign="middle"><input type="text" name="phone" id="phone" value="${PLAYER.getPhone()}" /></td>
+                <td height="40" width="60%" valign="middle"><input type="text" name="phone" id="phone" value="${PLAYER.getPhoneNumber()}" /></td>
             </tr>            
             <tr>
                 <td height="40" width="40%" valign="middle">Email:</td>

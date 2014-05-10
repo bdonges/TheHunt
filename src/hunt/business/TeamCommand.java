@@ -3,6 +3,7 @@ package hunt.business;
 import hunt.beans.Hunt;
 import hunt.beans.Team;
 import hunt.db.TeamManager;
+import hunt.utils.LoggerUtil;
 
 import java.sql.Connection;
 import java.util.Vector;
@@ -102,6 +103,7 @@ public class TeamCommand extends Command
 	 */
 	public Team getTeamAndPlayers(Connection con, String teamId) throws Exception
 	{
+		LoggerUtil.logToOut("TeamCommand.getTeamAndPlayers("+teamId+")");
 		Team team = getTeam(con, teamId);
 		team.setPlayers(new PlayerCommand().getPlayersForTeam(con, teamId));
 		return team;

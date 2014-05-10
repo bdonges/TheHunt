@@ -131,6 +131,20 @@ public class AccountGateway extends HttpServlet {
 			{
 				url = "/editaccount.jsp";
 			}
+			else if (action.equals("createnewaccount"))
+			{
+				session.removeAttribute("ACCOUNT");
+				Account account = new Account("0", "", "", "", "", "", "");
+				session.setAttribute("ACCOUNT", account);
+				url = "/editaccount.jsp";
+			}
+			else if (action.equals("mainaccount"))
+			{
+				session.removeAttribute("ACCOUNT");
+				session.setAttribute("ACCOUNT", aCmd.getAccountWithHunts((Connection)session.getAttribute("CONNECTION"), 
+						Integer.parseInt(req.getParameter("accountid"))));
+				url = "/index.jsp";
+			}
 		}
 		catch (Exception e)
 		{

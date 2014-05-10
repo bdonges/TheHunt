@@ -30,6 +30,10 @@
     <servlet-class>hunt.web.PlayerGateway</servlet-class>
   </servlet>  
   <servlet>
+    <servlet-name>questiongateway</servlet-name>
+    <servlet-class>hunt.web.QuestionGateway</servlet-class>
+  </servlet>  
+  <servlet>
     <servlet-name>teamgateway</servlet-name>
     <servlet-class>hunt.web.TeamGateway</servlet-class>
   </servlet>  
@@ -59,8 +63,13 @@
     <url-pattern>/playergateway</url-pattern>
   </servlet-mapping>    
   <servlet-mapping>
+    <servlet-name>questiongateway</servlet-name>
+    <url-pattern>/questiongateway</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
     <servlet-name>teamgateway</servlet-name>
     <url-pattern>/teamgateway</url-pattern>
   </servlet-mapping>  
  
 </web-app>
+

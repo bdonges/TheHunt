@@ -5,6 +5,7 @@ import java.util.Vector;
 
 import hunt.beans.Player;
 import hunt.db.PlayerManager;
+import hunt.utils.LoggerUtil;
 
 public class PlayerCommand extends Command
 {
@@ -38,7 +39,8 @@ public class PlayerCommand extends Command
 	 */
 	public Vector<Player> getPlayersForTeam(Connection con, String teamId) throws Exception
 	{
-		return mgr.getForTeam(con, new Player("","","","","",teamId));
+		LoggerUtil.logToOut("PlayerCommand.getPlayersForTeam("+teamId+")");
+		return mgr.getForTeam(con, new Player("", teamId, "", "", "", ""));
 	}
 	
 	/**

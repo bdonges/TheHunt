@@ -48,7 +48,7 @@ public class PlayerManager
 		Vector<Player> objs = new Vector<Player>();
 
 		// the one prepared statement
-		PreparedStatement pst = c.prepareStatement(sql);
+		PreparedStatement pst = c.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS);
 		
 		// work per action
 		if (action.equals(INSERT))

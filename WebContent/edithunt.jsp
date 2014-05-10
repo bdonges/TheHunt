@@ -25,25 +25,28 @@
         </c:if>        
         <input type="hidden" name="huntid" id="huntid" value="${HUNT.getId()}" />
         <input type="hidden" name="accountid" id="accountid" value="${HUNT.getAccountId()}" />
-        <table width="60%">
+        <table width="80%">
             <tr>
-                <td height="50" width="40%" valign="middle">The Hunt Project</td>
-                <td height="50" width="60%" valign="middle"><a href="/TheHunt/logout">logout</a></td>
+                <td height="70" width="50%" valign="middle"><b>The Hunt Project</b></td>
+                <td height="70" width="50%" valign="middle" align="right">
+                    <a href="/TheHunt/accountgateway?a=mainaccount&accountid=${HUNT.getAccountId()}">Back to Main</a>&nbsp;
+                    <a href="/TheHunt/logout">Logout</a>
+                </td>
             </tr>        
             <tr>
-                <td height="40" width="40%" valign="middle">Hunt Detail</td>
-                <td height="40" width="60%" valign="middle"><font color="red">${EMSG}</font><font color="green">${MSG}</font></td>            
+                <td height="20" width="50%" valign="middle">Hunt Detail</td>
+                <td height="20" width="50%" valign="middle"><font color="red">${EMSG}</font><font color="green">${MSG}</font></td>            
             </tr>
             <tr>
-                <td height="40" width="40%" valign="middle">Name:</td>
-                <td height="40" width="60%" valign="middle"><input type="text" name="name" id="name" value="${HUNT.getName()}" /></td>
+                <td height="20" width="50%" valign="middle">Name:</td>
+                <td height="20" width="50%" valign="middle"><input type="text" name="name" id="name" value="${HUNT.getName()}" /></td>
             </tr>
             <tr>
-                <td height="40" width="40%" valign="middle">Run Date:</td>
-                <td height="40" width="60%" valign="middle"><input type="date" name="rundate"></td>
+                <td height="20" width="50%" valign="middle">Run Date:</td>
+                <td height="20" width="50%" valign="middle"><input type="date" name="rundate"></td>
             </tr>            
             <tr>
-                <td height="60" valign="middle" colspan="2">
+                <td height="50" valign="middle" colspan="2">
                     <input type="submit" value="Submit" />
                 </td>
             </tr>
@@ -51,36 +54,50 @@
 
             <c:if test="${HUNT.getId() > 0}">
             
-            <tr><td height="40" width="100%" valign="middle"><hr/></td></tr>
+            <tr><td height="40" width="100%" valign="middle" colspan="2"><hr/></td></tr>
             
             <!-- start team section -->
             <tr>
-                <td height="50" width="40%" valign="middle">Teams</td>
-                <td height="50" width="60%" valign="middle"><a href="/TheHunt/teamgateway?a=createnewteam&huntid=${HUNT.getId()}">Add Team</a></td>
+                <td height="50" width="50%" valign="middle">Teams</td>
+                <td height="50" width="50%" valign="middle" align="right"><a href="/TheHunt/teamgateway?a=createnewteam&huntid=${HUNT.getId()}">Add Team</a></td>
             </tr>
             <c:if test="${HUNT.getTeams().size() == 0}">
             <tr><td height="50" valign="middle" colspan="2"><i>No Teams Found</i></td></tr>
             </c:if>
             <c:if test="${HUNT.getTeams().size() > 0}">
                 <c:forEach var="team" items="${HUNT.getTeams()}">
-                <tr><td height="50" valign="middle" colspan="2"><a href="/TheHunt/teamgateway?a=loadteam&huntid=${HUNT.getId()}&teamid=${team.getId()}">${team.getName()}</a></td></tr>
+                <tr>
+                    <td height="20" width="50%" valign="middle">
+                        <a href="/TheHunt/teamgateway?a=loadteam&huntid=${HUNT.getId()}&teamid=${team.getId()}">${team.getName()}</a>
+                    </td>
+                    <td height="20" width="50%" valign="middle" align="right">
+                        <a href="/TheHunt/teamgateway?a=deleteteam&huntid=${HUNT.getId()}&teamid=${team.getId()}">Delete</a>
+                    </td>
+                </tr>
                 </c:forEach>
             </c:if>                
             <!-- end team section -->
             
-            <tr><td height="40" width="100%" valign="middle"><hr/></td></tr>
+            <tr><td height="40" width="100%" valign="middle" colspan="2"><hr/></td></tr>
             
             <!-- start location section -->
             <tr>
-                <td height="50" width="40%" valign="middle">Locations</td>
-                <td height="50" width="60%" valign="middle"><a href="/TheHunt/locationgateway?a=addlocation&huntid=${HUNT.getId()}">Add Location</a></td>
+                <td height="50" width="50%" valign="middle">Locations</td>
+                <td height="50" width="50%" valign="middle" align="right"><a href="/TheHunt/locationgateway?a=createnewlocation&huntid=${HUNT.getId()}">Add Location</a></td>
             </tr>
-            <c:if test="${HUNT.getTeams().size() == 0}">
+            <c:if test="${HUNT.getLocations().size() == 0}">
             <tr><td height="50" valign="middle" colspan="2"><i>No Teams Found</i></td></tr>
             </c:if>
             <c:if test="${HUNT.getLocations().size() > 0}">
                 <c:forEach var="location" items="${HUNT.getLocations()}">
-                <tr><td height="50" valign="middle" colspan="2"><a href="/TheHunt/locationgateway?a=loadlocation&huntid=${HUNT.getId()}&locationid=${location.getId()}">${team.getName()}</a></td></tr>
+                <tr>
+                    <td height="20" width="50%" valign="middle">
+                        <a href="/TheHunt/locationgateway?a=loadlocation&huntid=${HUNT.getId()}&locationid=${location.getId()}">${location.getName()}</a>
+                    </td>
+                    <td height="20" width="50%" valign="middle" align="right">
+                        <a href="/TheHunt/locationgateway?a=deletelocation&huntid=${HUNT.getId()}&locationid=${location.getId()}">Delete</a>
+                    </td>
+                </tr>
                 </c:forEach>
             </c:if>              
             <!-- end location section -->

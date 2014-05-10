@@ -19,8 +19,8 @@ public class QuestionManager
 	private String GET = "GET";
 	private String GET_FOR_LOCATION = "GET_FOR_LOCATION";
 	
-	private String INSERT_QRY = "INSERT INTO questions (location_id, question, answer, points) values (?,?,?,?)";
-	private String UPDATE_QRY = "UPDATE questions SET location_id = ?, question = ?, answer = ?, points = ? WHERE id = ?";
+	private String INSERT_QRY = "INSERT INTO questions (location_id, question, answer, points, question_order) values (?,?,?,?,?)";
+	private String UPDATE_QRY = "UPDATE questions SET location_id = ?, question = ?, answer = ?, points = ?, question_order = ? WHERE id = ?";
 	private String DELETE_QRY = "DELETE FROM questions WHERE id = ?";
 	private String DELETE_FOR_LOCATION_QRY = "DELETE FROM questions WHERE location_id = ?";
 	private String GET_QRY = "SELECT * FROM questions WHERE id = ?";

@@ -9,27 +9,27 @@
     <body>
         <center>
         <form name="loginform" action="/TheHunt/login" method="post">
-        <table width="70%">
+        <table width="80%">
             <tr>
-                <td height="50" valign="middle" colspan="2">The Hunt Project</td>
+                <td height="50" valign="middle" colspan="2"><b>The Hunt Project</b></td>
             </tr> 
             <tr>
-                <td height="40" width="30%" valign="middle">Login</td>
-                <td height="40" width="70%" valign="middle"><font color="red">${EMSG}</font><font color="green">${MSG}</font></td>            
+                <td height="20" width="50%" valign="middle">Login</td>
+                <td height="20" width="50%" valign="middle"><font color="red">${EMSG}</font><font color="green">${MSG}</font></td>            
             </tr>
             <tr>
-                <td height="40" width="30%" valign="middle">User Name:</td>
-                <td height="40" width="70%" valign="middle"><input type="text" name="username" id="username" /></td>
+                <td height="20" width="50%" valign="middle">User Name:</td>
+                <td height="20" width="50%" valign="middle"><input type="text" name="username" id="username" /></td>
             </tr>
             <tr>
-                <td height="40" width="30%" valign="middle">Password:</td>
-                <td height="40" width="70%" valign="middle"><input type="password" name="password" id="password" /></td>
+                <td height="20" width="50%" valign="middle">Password:</td>
+                <td height="20" width="50%" valign="middle"><input type="password" name="password" id="password" /></td>
             </tr>
             <tr>
                 <td height="60" valign="middle" colspan="2"><input type="submit" value="Login" /></td>
             </tr>
             <tr>
-                <td height="50" valign="middle" colspan="2">Don't have an account?  <a href="/TheHunt/editaccount.jsp">Click here</a></td>            
+                <td height="50" valign="middle" colspan="2">Don't have an account?  <a href="/TheHunt/accountgateway?a=createnewaccount">Click here</a></td>            
             </tr>
         </table>
         </form>

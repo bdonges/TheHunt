@@ -1,8 +1,6 @@
 package hunt.utils;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class DateUtil 
 {
@@ -18,7 +16,10 @@ public class DateUtil
 		return new java.util.Date();
 	}
 	
-	
+	/**
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args)
 	{
 		try

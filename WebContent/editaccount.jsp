@@ -22,43 +22,47 @@
         <input type="hidden" name="a" id="a" value="editaccount" />
         </c:if>        
         <input type="hidden" name="accountid" id="accountid" value="${ACCOUNT.getId()}" />
-        <table width="70%">
+        <table width="80%">
             <tr>
-                <td height="50" width="30%" valign="middle">The Hunt Project</td>
-                <td height="50" width="70%" valign="middle"><a href="/TheHunt/logout">logout</a></td>
+                <td height="50" width="50%" valign="middle"><b>The Hunt Project</b></td>
+                <td height="50" width="50%" valign="middle" align="right">
+                    <c:if test="${ACCOUNT.getId() > 0}">
+                    <a href="/TheHunt/accountgateway?a=mainaccount&accountid=${ACCOUNT.getId()}">Back to Main</a>&nbsp;
+                    <a href="/TheHunt/logout">Logout</a>
+                    </c:if>
+                </td>
             </tr>        
             <tr>
-                <td height="40" width="30%" valign="middle">Account Detail</td>
-                <td height="40" width="70%" valign="middle"><font color="red">${EMSG}</font><font color="green">${MSG}</font></td>            
+                <td height="20" width="50%" valign="middle">Account Detail</td>
+                <td height="20" width="50%" valign="middle"><font color="red">${EMSG}</font><font color="green">${MSG}</font></td>            
             </tr>
             <tr>
-                <td height="40" width="30%" valign="middle">First Name:</td>
-                <td height="40" width="70%" valign="middle"><input type="text" name="firstname" id="firstname" value="${ACCOUNT.getFirstName()}" /></td>
+                <td height="20" width="50%" valign="middle">First Name:</td>
+                <td height="20" width="50%" valign="middle"><input type="text" name="firstname" id="firstname" value="${ACCOUNT.getFirstName()}" /></td>
             </tr>
             <tr>
-                <td height="40" width="30%" valign="middle">Last Name:</td>
-                <td height="40" width="70%" valign="middle"><input type="text" name="lastname" id="lastname" value="${ACCOUNT.getLastName()}" /></td>
+                <td height="20" width="50%" valign="middle">Last Name:</td>
+                <td height="20" width="50%" valign="middle"><input type="text" name="lastname" id="lastname" value="${ACCOUNT.getLastName()}" /></td>
             </tr>
             <tr>
-                <td height="40" width="30%" valign="middle">Phone Number:</td>
-                <td height="40" width="70%" valign="middle"><input type="text" name="phone" id="phone" value="${ACCOUNT.getPhone()}" /></td>
+                <td height="20" width="50%" valign="middle">Phone Number:</td>
+                <td height="20" width="50%" valign="middle"><input type="text" name="phone" id="phone" value="${ACCOUNT.getPhone()}" /></td>
             </tr>            
             <tr>
-                <td height="40" width="30%" valign="middle">Email:</td>
-                <td height="40" width="70%" valign="middle"><input type="text" name="email" id="email" value="${ACCOUNT.getEmail()}" /></td>
+                <td height="20" width="50%" valign="middle">Email:</td>
+                <td height="20" width="50%" valign="middle"><input type="text" name="email" id="email" value="${ACCOUNT.getEmail()}" /></td>
             </tr>            
             <tr>
-                <td height="40" width="30%" valign="middle">User Name:</td>
-                <td height="40" width="70%" valign="middle"><input type="text" name="username" id="username" value="${ACCOUNT.getUsername()}" /></td>
+                <td height="20" width="50%" valign="middle">User Name:</td>
+                <td height="20" width="50%" valign="middle"><input type="text" name="username" id="username" value="${ACCOUNT.getUsername()}" /></td>
             </tr>
             <tr>
-                <td height="40" width="30%" valign="middle">Password:</td>
-                <td height="40" width="70%" valign="middle"><input type="password" name="password" id="password" value="${ACCOUNT.getPassword()}" /></td>
+                <td height="20" width="50%" valign="middle">Password:</td>
+                <td height="20" width="50%" valign="middle"><input type="password" name="password" id="password" value="${ACCOUNT.getPassword()}" /></td>
             </tr>
             <tr>
                 <td height="60" valign="middle" colspan="2">
                     <input type="submit" value="Submit" />
-                    <a href="/TheHunt/index.jsp'">Cancel</a>
                 </td>
             </tr>
         </table>

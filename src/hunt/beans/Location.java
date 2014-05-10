@@ -110,7 +110,7 @@ public class Location extends BeanUtils
 	public void setId(String id) { data.put("id", id); }
 	public void setHuntId(String huntId) { data.put("huntId",huntId); }
 	public void setName(String name) { data.put("name",name); }
-	public void setCode(String code) { data.put("huntId",code); }
+	public void setCode(String code) { data.put("code",code); }
 	public void setKey(String key) { data.put("key",key); }
 	public void setAddress(String address) { data.put("address",address); }
 	public void setPhoneNumber(String phoneNumber) { data.put("phoneNumber",phoneNumber); }

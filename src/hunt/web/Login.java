@@ -76,6 +76,7 @@ public class Login extends HttpServlet {
 				{
 					// set account in session
 					account = aCmd.getAccountWithHunts(con, Integer.parseInt(account.getId()));
+					session.removeAttribute("ACCOUNT");
 					session.setAttribute("ACCOUNT", account);
 					
 					// set connection in session

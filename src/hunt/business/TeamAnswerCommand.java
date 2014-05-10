@@ -74,7 +74,7 @@ public class TeamAnswerCommand extends Command
 	{
 		String score = String.valueOf(new QuestionCommand().scoreAnswer(con, questionId, answer));
 		int id = mgr.insert(con, new TeamAnswer("", teamLocationId, questionId, answer, score));
-		return mgr.get(con, new TeamAnswer(String.valueOf("id"), "", "", "", ""));
+		return mgr.get(con, new TeamAnswer(String.valueOf(id), "", "", "", ""));
 	}
 	
 	/**
